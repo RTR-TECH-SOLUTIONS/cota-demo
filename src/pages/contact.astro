@@ -1,0 +1,230 @@
+---
+import Baza from '../layouts/Baza.astro';
+
+// TODO(real): numărul de WhatsApp și e-mailurile vin de la client.
+const whatsapp = 'https://wa.me/40700000000';
+
+const program = [
+  ['Luni – vineri', '08:30 – 18:00'],
+  ['Sâmbătă', '09:00 – 15:00'],
+  ['Duminică', 'Închis'],
+];
+---
+
+<Baza
+  titlu="Contact — Cotă prăjitorie, Brașov"
+  descriere="Adresa prăjitoriei Cotă din Brașov, programul, contactul pentru comenzi en-gros și cafenele."
+>
+  <section class="cap-pagina">
+    <div class="shell">
+      <p class="field-label">Contact</p>
+      <h1>Scrie-ne sau treci pe la atelier.</h1>
+      <p class="intro">
+        Răspundem la mesaje în aceeași zi lucrătoare. Pentru cafenele, birouri și en-gros,
+        scrie-ne direct pe e-mail și îți trimitem lista cu prețuri și mostre.
+      </p>
+    </div>
+  </section>
+
+  <section class="sectiune">
+    <div class="shell grila">
+      <div class="bloc">
+        <h2 class="field-label">Prăjitoria</h2>
+        <address>
+          Strada Postăvarului 14<br />
+          Brașov, 500025
+        </address>
+        <dl class="program">
+          {
+            program.map(([zi, ore]) => (
+              <div class="spec-row">
+                <dt>{zi}</dt>
+                <span class="spec-dots" aria-hidden="true" />
+                <dd>{ore}</dd>
+              </div>
+            ))
+          }
+        </dl>
+        <p class="nota">
+          Marțea și vinerea, după 15:00, e cupping deschis. Vino, nu trebuie să anunți.
+        </p>
+      </div>
+
+      <div class="bloc">
+        <h2 class="field-label">Scrie-ne</h2>
+        <ul class="canale">
+          <li>
+            <span class="canal-eticheta">Comenzi și întrebări</span>
+            <a href={whatsapp} class="link-rule" rel="noopener">Scrie-ne pe WhatsApp</a>
+          </li>
+          <li>
+            <span class="canal-eticheta">E-mail</span>
+            <a href="mailto:salut@cota.ro" class="link-rule">salut@cota.ro</a>
+          </li>
+          <li>
+            <span class="canal-eticheta">Cafenele și en-gros</span>
+            <a href="mailto:engros@cota.ro" class="link-rule">engros@cota.ro</a>
+          </li>
+          <li>
+            <span class="canal-eticheta">Telefon</span>
+            <a href="tel:+40700000000" class="link-rule">0700 000 000</a>
+          </li>
+        </ul>
+        <a href={whatsapp} class="btn btn-primary buton-wa" rel="noopener">Deschide WhatsApp</a>
+      </div>
+
+      <div class="bloc">
+        <h2 class="field-label">En-gros</h2>
+        <p class="engros">
+          Livrăm în saci de 1 kg către cafenele, restaurante și birouri din Brașov, Sibiu și
+          București. Facem instalarea rețetei pe mașina voastră și revenim la fiecare schimbare de
+          lot.
+        </p>
+        <dl class="program">
+          <div class="spec-row">
+            <dt>Comandă minimă</dt><span class="spec-dots" aria-hidden="true"></span><dd>4 kg</dd>
+          </div>
+          <div class="spec-row">
+            <dt>Livrare Brașov</dt><span class="spec-dots" aria-hidden="true"></span><dd>gratuită</dd>
+          </div>
+          <div class="spec-row">
+            <dt>Instruire barista</dt><span class="spec-dots" aria-hidden="true"></span><dd>inclusă</dd>
+          </div>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <section class="sectiune-harta" aria-labelledby="harta-titlu">
+    <div class="shell">
+      <div class="harta-cap">
+        <h2 id="harta-titlu" class="field-label">Unde ne găsești</h2>
+        <a
+          class="link-rule"
+          href="https://www.openstreetmap.org/?mlat=45.6427&mlon=25.5887#map=17/45.6427/25.5887"
+          target="_blank"
+          rel="noopener"
+        >
+          Deschide harta mare
+        </a>
+      </div>
+      <div class="harta">
+        <iframe
+          title="Harta cu prăjitoria Cotă, strada Postăvarului 14, Brașov"
+          src="https://www.openstreetmap.org/export/embed.html?bbox=25.5757%2C45.6362%2C25.6017%2C45.6492&layer=mapnik&marker=45.6427%2C25.5887"
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"></iframe>
+      </div>
+    </div>
+  </section>
+</Baza>
+
+<style>
+  .cap-pagina {
+    padding-block: clamp(2.5rem, 5vw, 4rem) 0;
+  }
+  h1 {
+    margin: 0.55rem 0 0;
+    font-size: clamp(2.25rem, 5.5vw, 3.75rem);
+    max-width: 16ch;
+  }
+  .intro {
+    margin: 1.15rem 0 0;
+    color: var(--color-ink-muted);
+    max-width: 54ch;
+    font-size: 1.0625rem;
+  }
+
+  .sectiune {
+    padding-block: clamp(2.5rem, 5vw, 4rem);
+  }
+  .grila {
+    display: grid;
+    gap: clamp(2rem, 4vw, 3.5rem);
+  }
+  @media (min-width: 820px) {
+    .grila {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  .bloc {
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--color-rule-strong);
+  }
+
+  address {
+    font-style: normal;
+    margin-top: 0.9rem;
+    font-size: 1.375rem;
+    line-height: 1.35;
+  }
+  .program {
+    margin: 1.25rem 0 0;
+  }
+  .nota,
+  .engros {
+    margin: 1.25rem 0 0;
+    color: var(--color-ink-muted);
+    font-size: 0.9375rem;
+  }
+
+  .canale {
+    list-style: none;
+    margin: 0.9rem 0 0;
+    padding: 0;
+    display: grid;
+    gap: 1.1rem;
+  }
+  .canale li {
+    display: grid;
+    gap: 0.25rem;
+  }
+  .canal-eticheta {
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-ink-faint);
+  }
+  .canale a {
+    width: fit-content;
+    font-size: 1.0625rem;
+  }
+  .buton-wa {
+    margin-top: 1.5rem;
+  }
+
+  .sectiune-harta {
+    padding-bottom: clamp(3rem, 6vw, 5rem);
+  }
+  .harta-cap {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.75rem 1.5rem;
+    padding-bottom: 0.9rem;
+    border-bottom: 1px solid var(--color-rule);
+    margin-bottom: 1.25rem;
+  }
+  .harta-cap h2 {
+    margin: 0;
+  }
+  .harta-cap a {
+    font-size: 0.875rem;
+  }
+  .harta {
+    border: 1px solid var(--color-rule-strong);
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    background: var(--color-paper-raised);
+  }
+  .harta iframe {
+    display: block;
+    width: 100%;
+    height: clamp(15rem, 38vw, 24rem);
+    border: 0;
+    /* Harta OSM e mult mai saturată decât restul paginii — o temperăm ca să nu
+       fure atenția de la conținut. */
+    filter: saturate(0.62) contrast(0.96);
+  }
+</style>

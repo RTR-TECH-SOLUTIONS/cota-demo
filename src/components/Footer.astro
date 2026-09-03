@@ -1,0 +1,221 @@
+---
+import Marca from './Marca.astro';
+import { ultimaPrajire, dataLunga } from '../data/cafele';
+import { cale } from '../lib/cale';
+
+const prajire = dataLunga(ultimaPrajire());
+const an = new Date().getFullYear();
+
+// Metodele de plată se scriu ca text, nu ca logo-uri străine puse la grămadă.
+const plati = ['Visa', 'Mastercard', 'Apple Pay', 'Ramburs la curier'];
+---
+
+<footer class="subsol">
+  <div class="shell">
+    <div class="grila">
+      <div class="coloana-marca">
+        <Marca class="marca-subsol" />
+        <p class="descriere">
+          Prăjitorie de cafea de specialitate. Cumpărăm loturi mici, le prăjim în Brașov și le
+          trimitem în maximum 24 de ore de la prăjire.
+        </p>
+        <dl class="fisa-subsol">
+          <div class="spec-row">
+            <dt>Ultima prăjire</dt><span class="spec-dots" aria-hidden="true"></span><dd>{prajire}</dd>
+          </div>
+          <div class="spec-row">
+            <dt>Telefon</dt><span class="spec-dots" aria-hidden="true"></span><dd>0700 000 000</dd>
+          </div>
+          <div class="spec-row">
+            <dt>E-mail</dt><span class="spec-dots" aria-hidden="true"></span><dd>salut@cota.ro</dd>
+          </div>
+        </dl>
+      </div>
+
+      <nav class="coloana" aria-label="Magazin">
+        <h2 class="cap-coloana">Magazin</h2>
+        <a href={cale('/cafea')}>Toate cafelele</a>
+        <a href={cale('/cafea?profil=fructat')}>Fructate și vii</a>
+        <a href={cale('/cafea?profil=echilibrat')}>Echilibrate și dulci</a>
+        <a href={cale('/cafea?profil=intens')}>Intense și cacao</a>
+        <a href={cale('/cafea?proces=Sugarcane+EA')}>Decofeinizată</a>
+        <a href={cale('/abonament')}>Abonament lunar</a>
+      </nav>
+
+      <nav class="coloana" aria-label="Prăjitoria">
+        <h2 class="cap-coloana">Prăjitoria</h2>
+        <a href={cale('/prajitoria')}>Cum lucrăm</a>
+        <a href={cale('/ghid')}>Ghid de preparare</a>
+        <a href={cale('/contact')}>Contact</a>
+        <a href="mailto:engros@cota.ro">Cafenele și en-gros</a>
+      </nav>
+
+      <nav class="coloana" aria-label="Comandă">
+        <h2 class="cap-coloana">Comandă</h2>
+        <a href={cale('/cos')}>Coșul tău</a>
+        <a href={cale('/finalizare')}>Finalizare comandă</a>
+        <a href={cale('/contact')}>Livrare și retur</a>
+        <a href={cale('/contact')}>Urmărește comanda</a>
+      </nav>
+
+      <div class="coloana">
+        <h2 class="cap-coloana">Vino în prăjitorie</h2>
+        <address>
+          Strada Postăvarului 14<br />
+          Brașov, 500025
+        </address>
+        <dl class="program">
+          <div><dt>Luni – vineri</dt><dd class="tabular">08:30 – 18:00</dd></div>
+          <div><dt>Sâmbătă</dt><dd class="tabular">09:00 – 15:00</dd></div>
+          <div><dt>Duminică</dt><dd>închis</dd></div>
+        </dl>
+      </div>
+    </div>
+
+    <div class="plati">
+      <span class="field-label">Plătești cu</span>
+      <ul>
+        {plati.map((p) => <li>{p}</li>)}
+      </ul>
+    </div>
+
+    <div class="jos">
+      <p>© {an} Cotă Prăjitorie de Cafea</p>
+      <p class="mentiune">Magazin demonstrativ · datele și comenzile nu sunt reale</p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .subsol {
+    border-top: 1px solid var(--color-rule);
+    background: var(--color-paper-deep);
+    padding-block: clamp(2.75rem, 6vw, 4.5rem) 2rem;
+  }
+
+  .grila {
+    display: grid;
+    gap: clamp(2rem, 5vw, 3rem);
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 640px) {
+    .grila {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 1080px) {
+    .grila {
+      grid-template-columns: 1.7fr 1fr 1fr 1fr 1.1fr;
+      gap: clamp(1.75rem, 3vw, 2.75rem);
+    }
+    .coloana-marca {
+      padding-right: 1.5rem;
+    }
+  }
+
+  .descriere {
+    margin: 1rem 0 0;
+    max-width: 34ch;
+    color: var(--color-ink-muted);
+    font-size: 0.9375rem;
+  }
+  .fisa-subsol {
+    margin: 1.25rem 0 0;
+    max-width: 22rem;
+  }
+
+  .cap-coloana {
+    font-family: var(--font-sans);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    margin: 0 0 0.9rem;
+  }
+  .coloana {
+    display: grid;
+    align-content: start;
+    gap: 0.55rem;
+  }
+  .coloana a {
+    color: var(--color-ink-muted);
+    text-decoration: none;
+    font-size: 0.9375rem;
+    width: fit-content;
+    border-bottom: 1px solid transparent;
+    transition:
+      color 160ms var(--ease-out-soft),
+      border-color 160ms var(--ease-out-soft);
+  }
+  .coloana a:hover {
+    color: var(--color-ink);
+    border-bottom-color: var(--color-rule-strong);
+  }
+
+  address {
+    font-style: normal;
+    color: var(--color-ink-muted);
+    font-size: 0.9375rem;
+  }
+  .program {
+    margin: 1rem 0 0;
+    display: grid;
+    gap: 0.3rem;
+    font-size: 0.75rem;
+    color: var(--color-ink-muted);
+  }
+  .program div {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: space-between;
+    max-width: 17.5rem;
+  }
+  .program dt,
+  .program dd {
+    margin: 0;
+    white-space: nowrap;
+  }
+
+  .plati {
+    margin-top: clamp(2.5rem, 5vw, 3.5rem);
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--color-rule-strong);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1.25rem;
+  }
+  .plati ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+  .plati li {
+    border: 1px solid var(--color-rule-strong);
+    border-radius: 5px;
+    padding: 0.3rem 0.55rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.03em;
+    color: var(--color-ink-muted);
+    background: var(--color-paper-raised);
+  }
+
+  .jos {
+    margin-top: 1.75rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.5rem;
+    justify-content: space-between;
+    font-size: 0.8125rem;
+    color: var(--color-ink-faint);
+  }
+  .jos p {
+    margin: 0;
+  }
+  .mentiune {
+    font-size: 0.75rem;
+    letter-spacing: 0.03em;
+  }
+</style>

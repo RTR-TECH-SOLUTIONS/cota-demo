@@ -1,0 +1,28 @@
+---
+type Props = { class?: string };
+const { class: clasa } = Astro.props;
+---
+
+<!-- Marca e doar cuvântul. Fără simbol înaintea lui. -->
+<span class:list={['marca', clasa]}>COTĂ</span>
+
+<style>
+  .marca {
+    display: inline-block;
+    color: var(--color-ink);
+    font-size: 1.3125rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    line-height: 1;
+    /* Tracking-ul adaugă spațiu și după ultima literă; îl scoatem ca să nu
+       pară că marca e împinsă la stânga față de restul rândului. */
+    margin-right: -0.2em;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  @media (min-width: 700px) {
+    .marca {
+      font-size: 1.5rem;
+    }
+  }
+</style>

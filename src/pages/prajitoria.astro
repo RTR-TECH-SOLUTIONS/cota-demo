@@ -1,0 +1,340 @@
+---
+import { Image } from 'astro:assets';
+import Baza from '../layouts/Baza.astro';
+import Newsletter from '../components/Newsletter.astro';
+
+import atelier from '../assets/foto/atelier.jpg';
+import saci from '../assets/foto/saci.jpg';
+import ambalare from '../assets/foto/ambalare.jpg';
+import raft from '../assets/foto/raft.jpg';
+import caiet from '../assets/foto/caiet-prajire.jpg';
+import { cale } from '../lib/cale';
+
+const etape = [
+  {
+    numar: '01',
+    titlu: 'Cumpărăm pe mostră, nu pe listă',
+    text: 'Primim probe de 200 g de la trei–patru importatori, le prăjim pe toate la același profil de probă și le punem pe masă fără să știm care e care. Cumpărăm doar ce trece de scorul 84.',
+  },
+  {
+    numar: '02',
+    titlu: 'Șarje de 12 kilograme',
+    text: 'Prăjim marți și vineri, pe o tobă cu tambur de 12 kg. O zi de prăjire înseamnă între patru și șapte șarje, atât cât se vinde până la următoarea.',
+  },
+  {
+    numar: '03',
+    titlu: 'Fiecare șarjă e înregistrată',
+    text: 'Temperatura de încărcare, minutul primului pocnet, timpul de dezvoltare, timpul total. Dacă un lot iese altfel decât data trecută, avem unde să ne uităm și ce să corectăm.',
+  },
+  {
+    numar: '04',
+    titlu: 'Cupping a doua zi',
+    text: 'Gustăm fiecare șarjă la 24 de ore după prăjire, la aceeași rețetă. Ce nu ne place nu ajunge pe raft — ajunge în cafeaua noastră de dimineață.',
+  },
+  {
+    numar: '05',
+    titlu: 'Ambalare în ziua expedierii',
+    text: 'Punem cafeaua în pungi de 250 g cu supapă unidirecțională, cu data prăjirii scrisă pe etichetă. Nu ținem stoc ambalat pe raft mai mult de o săptămână.',
+  },
+];
+
+const dotari = [
+  ['Tobă', 'Tambur, 12 kg pe șarjă'],
+  ['Zile de prăjire', 'Marți și vineri'],
+  ['Șarje pe zi', '4 – 7'],
+  ['Scor minim acceptat', '84 / 100'],
+  ['Ambalaj', 'Pungă 250 g cu supapă'],
+  ['Din', '2019'],
+];
+---
+
+<Baza
+  titlu="Prăjitoria — Cotă, Brașov"
+  descriere="Cum cumpărăm, cum prăjim și cum verificăm fiecare lot de cafea de specialitate la prăjitoria Cotă din Brașov."
+>
+  <section class="cap-pagina">
+    <div class="shell">
+      <p class="field-label">Prăjitoria</p>
+      <h1>Douăsprezece kilograme o dată, din 2019.</h1>
+      <p class="intro">
+        Suntem trei oameni și o tobă, într-un atelier de pe Postăvarului. Nu avem ambiția să
+        acoperim toată țara cu cafea. Avem ambiția ca lotul pe care îl bei în octombrie să fie la
+        fel de bun ca cel din martie.
+      </p>
+    </div>
+  </section>
+
+  <figure class="foto-lata">
+    <Image
+      src={atelier}
+      alt="Toba de prăjire cu tambur, în atelierul din Brașov, în lumina dimineții"
+      widths={[720, 1200, 1800]}
+      sizes="100vw"
+      loading="eager"
+    />
+    <figcaption>Atelierul de pe Postăvarului, marți la 7:20, înainte de prima șarjă.</figcaption>
+  </figure>
+
+  <section class="sectiune">
+    <div class="shell">
+      <div class="sectiune-cap">
+        <p class="field-label">Cum lucrăm</p>
+        <h2>De la mostră la pungă, în cinci etape</h2>
+      </div>
+      <ol class="etape">
+        {
+          etape.map((e) => (
+            <li>
+              <span class="etapa-numar">{e.numar}</span>
+              <div>
+                <h3>{e.titlu}</h3>
+                <p>{e.text}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <section class="sectiune fundal">
+    <div class="shell split">
+      <div>
+        <p class="field-label">Fișa prăjitoriei</p>
+        <h2>Cifrele, pe scurt</h2>
+        <dl class="dotari">
+          {
+            dotari.map(([k, v]) => (
+              <div class="spec-row">
+                <dt>{k}</dt>
+                <span class="spec-dots" aria-hidden="true" />
+                <dd>{v}</dd>
+              </div>
+            ))
+          }
+        </dl>
+        <p class="nota">
+          Lucrăm cu trei importatori care merg an de an la aceleași ferme. Numele producătorului e
+          scris pe fiecare pungă, iar când un lot se termină nu îl înlocuim cu altceva sub același
+          nume.
+        </p>
+      </div>
+      <div class="galerie">
+        <figure>
+          <Image
+            src={saci}
+            alt="Saci de iută cu cafea verde, stivuiți în depozitul prăjitoriei"
+            widths={[380, 620, 900]}
+            sizes="(min-width: 860px) 22vw, 45vw"
+            loading="lazy"
+          />
+        </figure>
+        <figure>
+          <Image
+            src={ambalare}
+            alt="Bancul de ambalare: pungă pe cântar, etichete și ștampila de dată"
+            widths={[380, 620, 900]}
+            sizes="(min-width: 860px) 22vw, 45vw"
+            loading="lazy"
+          />
+        </figure>
+        <figure>
+          <Image
+            src={caiet}
+            alt="Caietul de prăjire, cu curba desenată de mână și termometrul alături"
+            widths={[380, 620, 900]}
+            sizes="(min-width: 860px) 22vw, 45vw"
+            loading="lazy"
+          />
+        </figure>
+        <figure class="lata">
+          <Image
+            src={raft}
+            alt="Raftul prăjitoriei, cu pungile de 250 g așezate în rând"
+            widths={[520, 900, 1300]}
+            sizes="(min-width: 860px) 45vw, 92vw"
+            loading="lazy"
+          />
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="sectiune">
+    <div class="shell chemare">
+      <h2>Vino să guști înainte să cumperi.</h2>
+      <p>
+        Marțea și vinerea, după ora 15:00, e cupping deschis în atelier. Nu trebuie să anunți, dar
+        e bine să dai un mesaj dacă veniți mai mulți.
+      </p>
+      <div class="chemare-butoane">
+        <a href={cale('/contact')} class="btn btn-primary">Cum ajungi la noi</a>
+        <a href={cale('/cafea')} class="btn btn-outline">Vezi ce e pe raft</a>
+      </div>
+    </div>
+  </section>
+
+  <Newsletter />
+</Baza>
+
+<style>
+  .cap-pagina {
+    padding-block: clamp(2.5rem, 5vw, 4rem) clamp(2rem, 4vw, 3rem);
+  }
+  h1 {
+    margin: 0.55rem 0 0;
+    font-size: clamp(2.25rem, 5.5vw, 3.75rem);
+    max-width: 16ch;
+  }
+  .intro {
+    margin: 1.25rem 0 0;
+    color: var(--color-ink-muted);
+    max-width: 56ch;
+    font-size: 1.0625rem;
+  }
+
+  .foto-lata {
+    margin: 0;
+    position: relative;
+  }
+  .foto-lata :global(img) {
+    width: 100%;
+    aspect-ratio: 21 / 9;
+    object-fit: cover;
+  }
+  .foto-lata figcaption {
+    max-width: 84rem;
+    margin-inline: auto;
+    padding: 0.85rem var(--gutter) 0;
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+    color: var(--color-ink-faint);
+  }
+
+  .sectiune {
+    padding-block: clamp(3rem, 6vw, 5rem);
+  }
+  .fundal {
+    background: var(--color-paper-deep);
+    border-block: 1px solid var(--color-rule);
+  }
+  .sectiune-cap {
+    margin-bottom: clamp(1.75rem, 3.5vw, 2.5rem);
+  }
+  .sectiune-cap h2,
+  .split h2 {
+    margin: 0.5rem 0 0;
+    font-size: clamp(1.75rem, 3.6vw, 2.5rem);
+    max-width: 18ch;
+  }
+
+  .etape {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0;
+    counter-reset: etapa;
+  }
+  .etape li {
+    display: grid;
+    grid-template-columns: 3rem minmax(0, 1fr);
+    gap: 1rem;
+    padding-block: 1.5rem;
+    border-top: 1px solid var(--color-rule);
+  }
+  @media (min-width: 760px) {
+    .etape li {
+      grid-template-columns: 6rem minmax(0, 1fr);
+      gap: 2.5rem;
+      padding-block: 2rem;
+    }
+  }
+  .etape li:last-child {
+    border-bottom: 1px solid var(--color-rule);
+  }
+  .etapa-numar {
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    color: var(--color-ink-faint);
+    padding-top: 0.35rem;
+  }
+  .etape h3 {
+    margin: 0;
+    font-size: clamp(1.25rem, 2.4vw, 1.625rem);
+  }
+  .etape p {
+    margin: 0.6rem 0 0;
+    color: var(--color-ink-muted);
+    max-width: 62ch;
+  }
+
+  .split {
+    display: grid;
+    gap: clamp(2rem, 4vw, 3.5rem);
+    align-items: start;
+  }
+  @media (min-width: 860px) {
+    .split {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: clamp(2.5rem, 5vw, 4.5rem);
+    }
+  }
+  .dotari {
+    margin: 1.5rem 0 0;
+    padding-top: 0.5rem;
+    border-top: 1px solid var(--color-rule-strong);
+    max-width: 30rem;
+  }
+  .nota {
+    margin: 1.5rem 0 0;
+    color: var(--color-ink-muted);
+    max-width: 52ch;
+  }
+
+  .galerie {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+  }
+  .galerie figure {
+    margin: 0;
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    background: var(--color-paper);
+  }
+  .galerie :global(img) {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+  }
+  .galerie .lata {
+    grid-column: span 2;
+  }
+  .galerie .lata :global(img) {
+    aspect-ratio: 16 / 9;
+  }
+
+  .chemare > * {
+    max-width: 46rem;
+  }
+  .chemare {
+    padding-top: 2rem;
+    border-top: 1px solid var(--color-rule);
+  }
+  .chemare h2 {
+    margin: 0;
+    font-size: clamp(1.75rem, 3.8vw, 2.5rem);
+  }
+  .chemare p {
+    margin: 1rem 0 0;
+    color: var(--color-ink-muted);
+    max-width: 54ch;
+  }
+  .chemare-butoane {
+    margin-top: 1.75rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+</style>

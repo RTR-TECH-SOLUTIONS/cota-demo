@@ -1,0 +1,147 @@
+---
+---
+
+<section class="buletin rule-top" aria-labelledby="buletin-titlu">
+  <div class="shell buletin-grila">
+    <div>
+      <p class="field-label">Lot nou</p>
+      <h2 id="buletin-titlu">Îți scriem când intră un lot nou pe raft.</h2>
+      <p class="explicatie">
+        Cam de două ori pe lună, cu ce am cumpărat și de ce. Fără reduceri inventate și fără
+        numărătoare inversă.
+      </p>
+    </div>
+
+    <form class="formular" data-buletin novalidate>
+      <div class="camp">
+        <label for="email-buletin">Adresa de e-mail</label>
+        <input
+          id="email-buletin"
+          name="email"
+          type="email"
+          required
+          autocomplete="email"
+          placeholder="numele@exemplu.ro"
+        />
+      </div>
+      <button type="submit" class="btn btn-primary">Abonează-mă</button>
+      <p class="raspuns" data-raspuns role="status" aria-live="polite"></p>
+    </form>
+  </div>
+</section>
+
+<script>
+  // TODO(real): trimitere către Resend / listă de newsletter.
+  document.querySelectorAll<HTMLFormElement>('[data-buletin]').forEach((form) => {
+    const raspuns = form.querySelector<HTMLElement>('[data-raspuns]');
+    const input = form.querySelector<HTMLInputElement>('input[type="email"]');
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (!raspuns || !input) return;
+
+      const valoare = input.value.trim();
+      const valid = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(valoare);
+
+      if (!valid) {
+        raspuns.textContent = 'Verifică adresa de e-mail.';
+        raspuns.dataset.stare = 'eroare';
+        input.setAttribute('aria-invalid', 'true');
+        input.focus();
+        return;
+      }
+
+      input.removeAttribute('aria-invalid');
+      raspuns.textContent = 'Gata. Îți scriem la următoarea prăjire.';
+      raspuns.dataset.stare = 'ok';
+      form.reset();
+    });
+  });
+</script>
+
+<style>
+  .buletin {
+    padding-block: clamp(3rem, 7vw, 5rem);
+  }
+
+  .buletin-grila {
+    display: grid;
+    gap: clamp(1.75rem, 4vw, 3.5rem);
+    align-items: start;
+  }
+  @media (min-width: 860px) {
+    .buletin-grila {
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+    }
+  }
+
+  h2 {
+    margin: 0.5rem 0 0;
+    font-size: clamp(1.6rem, 3.4vw, 2.25rem);
+    max-width: 20ch;
+  }
+
+  .explicatie {
+    margin: 0.85rem 0 0;
+    color: var(--color-ink-muted);
+    max-width: 42ch;
+  }
+
+  .formular {
+    display: grid;
+    gap: 0.85rem;
+    align-content: start;
+  }
+  @media (min-width: 520px) {
+    .formular {
+      grid-template-columns: 1fr auto;
+      align-items: end;
+    }
+    .raspuns {
+      grid-column: 1 / -1;
+    }
+  }
+
+  .camp {
+    display: grid;
+    gap: 0.4rem;
+  }
+  label {
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-ink-faint);
+  }
+  input {
+    font: inherit;
+    font-size: 1rem;
+    padding: 0.75rem 0.9rem;
+    border: 1px solid var(--color-rule-strong);
+    border-radius: 10px;
+    background: var(--color-paper-raised);
+    color: var(--color-ink);
+    width: 100%;
+  }
+  input::placeholder {
+    color: var(--color-ink-faint);
+  }
+  input:focus-visible {
+    border-color: var(--color-ink);
+  }
+  input[aria-invalid='true'] {
+    border-color: var(--color-stamp);
+  }
+
+  .raspuns {
+    margin: 0;
+    font-size: 0.8125rem;
+    min-height: 1.2em;
+  }
+  .raspuns[data-stare='eroare'] {
+    color: var(--color-stamp);
+  }
+  .raspuns[data-stare='ok'] {
+    color: var(--color-ink-muted);
+  }
+</style>

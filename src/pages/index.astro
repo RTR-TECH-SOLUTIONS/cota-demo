@@ -1,0 +1,1111 @@
+---
+import { Image } from 'astro:assets';
+import Baza from '../layouts/Baza.astro';
+import CardCafea from '../components/CardCafea';
+import CardProdus from '../components/CardProdus';
+import BaraIncredere from '../components/BaraIncredere.astro';
+import BannerReduceri from '../components/BannerReduceri.astro';
+import Intrebari from '../components/Intrebari.astro';
+import Newsletter from '../components/Newsletter.astro';
+import { imaginiPungi } from '../lib/pungi';
+import { imaginiProduse } from '../lib/produse';
+import { cafele, PROFILE, ultimaPrajire, dataLunga, lei } from '../data/cafele';
+import { pachete, accesorii, toateAltele, procentReducere } from '../data/altele';
+import type { Profil } from '../data/cafele';
+
+import hero from '../assets/foto/hero.jpg';
+import prajitoriaLat from '../assets/foto/prajitoria-lat.jpg';
+import colet from '../assets/foto/colet.jpg';
+import macinare from '../assets/foto/macinare.jpg';
+import boabeVerzi from '../assets/foto/boabe-verzi.jpg';
+import v60 from '../assets/foto/v60.jpg';
+import espresso from '../assets/foto/espresso.jpg';
+import pungiTrei from '../assets/foto/pungi-trei.jpg';
+import cutieCadou from '../assets/foto/cutie-cadou.jpg';
+import accesoriiGrup from '../assets/foto/accesorii-grup.jpg';
+import randDePungi from '../assets/foto/rand-de-pungi.jpg';
+import cupping from '../assets/foto/cupping.jpg';
+import { cale } from '../lib/cale';
+
+const imagini = await imaginiPungi();
+const imgProduse = await imaginiProduse();
+const prajireText = dataLunga(ultimaPrajire());
+
+// Categoriile magazinului, ca dale cu fotografie. Astea sunt „raioanele".
+const categorii = [
+  { titlu: 'Cafea boabe', nota: `${cafele.length} loturi`, href: '/cafea', foto: randDePungi,
+    alt: 'Pungi de 250 g așezate în rând' },
+  { titlu: 'Pentru espresso', nota: 'Corp gros, cacao', href: '/cafea?pentru=espresso', foto: espresso,
+    alt: 'Espresso care curge din portafiltru' },
+  { titlu: 'Pentru filtru', nota: 'Fructat, limpede', href: '/cafea?pentru=filtru', foto: v60,
+    alt: 'Apă turnată în spirală într-un filtru conic' },
+  { titlu: 'Decofeinizată', nota: 'Sugarcane EA', href: '/cafea?proces=Sugarcane+EA', foto: cupping,
+    alt: 'Masa de cupping, cu boluri pregătite' },
+  { titlu: 'Pachete și cadouri', nota: `${pachete.length} pachete`, href: '/pachete', foto: cutieCadou,
+    alt: 'Cutie cadou neagră cu două pungi de cafea' },
+  { titlu: 'Accesorii', nota: `${accesorii.length} produse`, href: '/accesorii', foto: accesoriiGrup,
+    alt: 'Râșniță, filtru, cafetieră moka și cântar' },
+];
+
+// Reducerile: cafea + pachete, adunate.
+const cafeleReduse = cafele.filter((c) => procentReducere(c.pret250, c.pretVechi) !== null);
+const alteleReduse = toateAltele.filter((p) => procentReducere(p.pret, p.pretVechi) !== null);
+const reducereMax = Math.max(
+  ...cafeleReduse.map((c) => procentReducere(c.pret250, c.pretVechi)!),
+  ...alteleReduse.map((p) => procentReducere(p.pret, p.pretVechi)!),
+);
+
+const peRaft = [
+  'etiopia-worka-sakaro',
+  'columbia-el-mirador',
+  'costa-rica-don-eli',
+  'cota-zero-espresso',
+  'kenya-gichathaini-aa',
+  'brazilia-fazenda-rainha',
+  'guatemala-la-bolsa',
+  'peru-sol-y-cafe',
+].map((slug) => cafele.find((c) => c.slug === slug)!);
+
+// Fiecare profil primește o fotografie, nu un paragraf. Navigarea pe gust e
+// pattern-ul care merge în nișă (20 Grams, Origo).
+const profileOrdine: { cheie: Profil; foto: ImageMetadata; alt: string }[] = [
+  {
+    cheie: 'fructat',
+    foto: boabeVerzi,
+    alt: 'Mâini care ridică boabe verzi de cafea dintr-un sac de iută',
+  },
+  {
+    cheie: 'echilibrat',
+    foto: v60,
+    alt: 'Apă turnată în spirală peste cafea, într-un filtru conic',
+  },
+  {
+    cheie: 'intens',
+    foto: espresso,
+    alt: 'Espresso care curge din portafiltru într-o ceașcă albă',
+  },
+];
+const numarProfil = (p: Profil) => cafele.filter((c) => c.profil === p).length;
+
+const retete = [
+  {
+    metoda: 'V60',
+    pentru: 'Cafele fructate și spălate',
+    randuri: [
+      ['Rație', '15 g : 250 ml'],
+      ['Măcinare', 'Medie, ca sarea grunjoasă'],
+      ['Apă', '94 °C'],
+      ['Timp total', '2 min 45 s'],
+    ],
+  },
+  {
+    metoda: 'Espresso',
+    pentru: 'Blendul de casă și naturalele',
+    randuri: [
+      ['Rație', '18 g : 38 g'],
+      ['Măcinare', 'Fină, ajustată zilnic'],
+      ['Apă', '93 °C'],
+      ['Timp total', '27 – 30 s'],
+    ],
+  },
+  {
+    metoda: 'Cafetieră',
+    pentru: 'Dimineți fără cântar',
+    randuri: [
+      ['Rație', '30 g : 500 ml'],
+      ['Măcinare', 'Grosieră'],
+      ['Apă', '95 °C'],
+      ['Timp total', '4 min, apoi presezi'],
+    ],
+  },
+];
+
+const recenzii = [
+  {
+    text: 'Am comandat marți seara, joi dimineața aveam punga în cutia poștală, cu data prăjirii ștampilată pe etichetă. Etiopia aia chiar are gust de bergamotă, nu era o vorbă goală.',
+    nume: 'Andrei M.',
+    oras: 'Cluj-Napoca',
+  },
+  {
+    text: 'Beau espresso de zece ani și nu mă interesau poveștile cu ferme. Blendul lor de casă e primul care mi-a ținut crema constantă două luni la rând, cu aceeași rețetă pe mașină.',
+    nume: 'Raluca P.',
+    oras: 'București',
+  },
+  {
+    text: 'Am luat abonamentul de 4 săptămâni ca să nu mai stau eu să aleg. Mi-au trimis o Costa Rica honey pe care nu aș fi comandat-o niciodată singură și acum o cer de fiecare dată.',
+    nume: 'Ioana T.',
+    oras: 'Timișoara',
+  },
+];
+
+const celMaiIeftin = Math.min(...cafele.map((c) => c.pret250));
+
+// Hero-ul vinde oferta cea mai bună, nu doar atmosfera.
+const oferta = [...cafeleReduse].sort(
+  (a, b) => procentReducere(b.pret250, b.pretVechi)! - procentReducere(a.pret250, a.pretVechi)!,
+)[0];
+const ofertaProcent = procentReducere(oferta.pret250, oferta.pretVechi)!;
+const economieTotala =
+  cafeleReduse.reduce((t, c) => t + (c.pretVechi! - c.pret250), 0) +
+  alteleReduse.reduce((t, p) => t + (p.pretVechi! - p.pret), 0);
+---
+
+<Baza titlu="Cafea boabe de specialitate, prăjită în Brașov — Cotă">
+  <!-- ── Hero ─────────────────────────────────────────────────────── -->
+  <section class="hero">
+    <Image
+      class="hero-fundal"
+      src={hero}
+      alt="Boabe proaspăt prăjite care se revarsă din toba de prăjire în tava de răcire"
+      widths={[900, 1400, 2000, 2600]}
+      sizes="100vw"
+      loading="eager"
+      fetchpriority="high"
+    />
+    <div class="hero-voal" aria-hidden="true"></div>
+
+    <div class="shell hero-grila">
+      <div class="hero-continut">
+        <span class="stamp stamp-clar">Prăjit {prajireText}</span>
+        <h1>Cafea boabe, prăjită săptămâna asta.</h1>
+        <p class="hero-sub">
+          Zece loturi de specialitate din ferme pe care le știm pe nume, prăjite în Brașov marți
+          și vineri, ambalate în pungi de 250 g cu supapă. De la {lei(celMaiIeftin)} lei punga.
+        </p>
+        <div class="hero-butoane">
+          <a href={cale('/cafea')} class="btn btn-clar">Vezi cele {cafele.length} cafele</a>
+          <a href={cale('/abonament')} class="btn btn-fantoma">Pornește un abonament</a>
+        </div>
+      </div>
+
+      <!-- Oferta săptămânii, direct în hero: preț, reducere, buton. -->
+      <a class="oferta" href={cale(`/cafea/${oferta.slug}`)}>
+        <span class="oferta-cap">
+          <span class="oferta-eticheta">Oferta săptămânii</span>
+          <span class="oferta-procent">−{ofertaProcent}%</span>
+        </span>
+
+        <span class="oferta-corp">
+          <span class="oferta-foto">
+            <img
+              src={imagini[oferta.slug].src}
+              srcset={imagini[oferta.slug].srcset}
+              sizes="(min-width: 1000px) 8rem, 6rem"
+              width={imagini[oferta.slug].latime}
+              height={imagini[oferta.slug].inaltime}
+              alt=""
+              loading="eager"
+            />
+          </span>
+          <span class="oferta-text">
+            <span class="oferta-nume">{oferta.origine}</span>
+            <span class="oferta-regiune">{oferta.regiune}</span>
+            <span class="oferta-preturi">
+              <s>{lei(oferta.pretVechi!)}</s>
+              <strong>{lei(oferta.pret250)} lei</strong>
+            </span>
+          </span>
+        </span>
+
+        <span class="oferta-motiv">{oferta.motivReducere}</span>
+        <span class="oferta-buton">Vezi lotul</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- ── Banda de oferte ──────────────────────────────────────────── -->
+  <a class="banda-oferte" href={cale('/promotii')}>
+    <span class="shell banda-oferte-rand">
+      <span class="banda-oferte-punct" aria-hidden="true"></span>
+      <span>
+        Ofertele săptămânii: <strong>{cafeleReduse.length + alteleReduse.length} produse</strong>{' '}
+        cu preț redus, din stocul curent. Economisești până la{' '}
+        <strong>{economieTotala} lei</strong>.
+      </span>
+      <span class="banda-oferte-link">Vezi toate reducerile</span>
+    </span>
+  </a>
+
+  <BaraIncredere />
+
+  <!-- ── Categorii ────────────────────────────────────────────────── -->
+  <section class="sectiune" aria-labelledby="categorii-titlu">
+    <div class="shell">
+      <div class="sectiune-cap rand">
+        <div>
+          <p class="field-label">Categorii</p>
+          <h2 id="categorii-titlu">Ce găsești la noi</h2>
+        </div>
+        <a href={cale('/cafea')} class="link-rule">Vezi tot raftul</a>
+      </div>
+
+      <ul class="categorii">
+        {
+          categorii.map((c) => (
+            <li>
+              <a class="categorie" href={cale(c.href)}>
+                <Image
+                  src={c.foto}
+                  alt={c.alt}
+                  widths={[280, 480, 720]}
+                  sizes="(min-width: 1000px) 16vw, (min-width: 620px) 31vw, 46vw"
+                  loading="lazy"
+                />
+                <span class="categorie-voal" aria-hidden="true" />
+                <span class="categorie-text">
+                  <span class="categorie-titlu">{c.titlu}</span>
+                  <span class="categorie-nota">{c.nota}</span>
+                </span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- ── Pe raft acum ─────────────────────────────────────────────── -->
+  <section class="sectiune" aria-labelledby="raft-titlu">
+    <div class="shell">
+      <div class="sectiune-cap rand">
+        <div>
+          <p class="field-label">Pe raft acum</p>
+          <h2 id="raft-titlu">Prăjite {prajireText}</h2>
+        </div>
+        <a href={cale('/cafea')} class="link-rule">Toate cele {cafele.length} cafele</a>
+      </div>
+
+      <div class="grila-cafele">
+        {
+          peRaft.map((c, i) => (
+            <CardCafea client:visible cafea={c} imagine={imagini[c.slug]} prioritara={i < 3} />
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Banner de reduceri ───────────────────────────────────────── -->
+  <BannerReduceri />
+
+  <!-- ── Reduceri ─────────────────────────────────────────────────── -->
+  <section class="sectiune sectiune-adanca" aria-labelledby="reduceri-titlu">
+    <div class="shell">
+      <div class="sectiune-cap rand">
+        <div>
+          <p class="field-label field-accent">La reducere acum</p>
+          <h2 id="reduceri-titlu">Fiecare reducere are un motiv scris</h2>
+          <p class="sectiune-intro">
+            Lot pe terminate, lot care iese din catalog sau preț mai bun la pachet. Nu umflăm
+            prețul ca să-l tăiem după.
+          </p>
+        </div>
+        <a href={cale('/promotii')} class="link-rule">Toate reducerile</a>
+      </div>
+      <div class="grila-cafele">
+        {cafeleReduse.map((c) => <CardCafea client:visible cafea={c} imagine={imagini[c.slug]} />)}
+        {
+          alteleReduse.slice(0, 1).map((p) => (
+            <CardProdus client:visible produs={p} imagine={imgProduse[p.imagine]} />
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Alege după gust ──────────────────────────────────────────── -->
+  <section class="sectiune sectiune-adanca" aria-labelledby="gust-titlu">
+    <div class="shell">
+      <div class="sectiune-cap">
+        <p class="field-label">Alege după gust</p>
+        <h2 id="gust-titlu">Cum îți place cafeaua?</h2>
+        <p class="sectiune-intro">
+          Nu te întrebăm ce metodă folosești. Te întrebăm ce vrei să simți în ceașcă, iar noi îți
+          arătăm loturile care fac asta.
+        </p>
+      </div>
+
+      <ul class="profile">
+        {
+          profileOrdine.map(({ cheie, foto, alt }) => (
+            <li>
+              <a class="profil" href={cale(`/cafea?profil=${cheie}`)}>
+                <Image
+                  src={foto}
+                  alt={alt}
+                  widths={[420, 720, 1000]}
+                  sizes="(min-width: 760px) 31vw, 88vw"
+                  loading="lazy"
+                />
+                <span class="profil-voal" aria-hidden="true" />
+                <span class="profil-text">
+                  <span class="profil-titlu">{PROFILE[cheie].titlu}</span>
+                  <span class="profil-numar">{numarProfil(cheie)} cafele</span>
+                </span>
+              </a>
+              <p class="profil-explicatie">{PROFILE[cheie].explicatie}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- ── Pachete ──────────────────────────────────────────────────── -->
+  <section class="sectiune" aria-labelledby="speciale-titlu">
+    <div class="shell">
+      <div class="sectiune-cap rand">
+        <div>
+          <p class="field-label">Pachete</p>
+          <h2 id="speciale-titlu">Mai mult decât o pungă</h2>
+        </div>
+        <a href={cale('/pachete')} class="link-rule">Toate pachetele</a>
+      </div>
+      <div class="grila-cafele grila-doua">
+        {pachete.map((p) => <CardProdus client:visible produs={p} imagine={imgProduse[p.imagine]} />)}
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Abonament ────────────────────────────────────────────────── -->
+  <section class="sectiune sectiune-adanca" aria-labelledby="abonament-titlu">
+    <div class="shell split">
+      <figure class="split-foto">
+        <Image
+          src={colet}
+          alt="Pungă de 250 g cu eticheta lotului, alături de o ceașcă de cafea și o cupă de boabe"
+          widths={[520, 760, 1100]}
+          sizes="(min-width: 860px) 46vw, 100vw"
+          loading="lazy"
+        />
+      </figure>
+      <div class="split-text">
+        <p class="field-label">Abonament</p>
+        <h2 id="abonament-titlu">Alegem noi, o dată la două sau patru săptămâni.</h2>
+        <p>
+          Primești o pungă de 250 g din lotul prăjit în dimineața expedierii. Ne spui doar dacă o
+          bei la filtru sau la espresso și cât de departe vrei să mergem cu aciditatea.
+        </p>
+        <dl class="mini-fisa">
+          <div class="spec-row">
+            <dt>Frecvență</dt><span class="spec-dots" aria-hidden="true"></span><dd>2 sau 4 săptămâni</dd>
+          </div>
+          <div class="spec-row">
+            <dt>Preț</dt><span class="spec-dots" aria-hidden="true"></span><dd>de la 52 lei / livrare</dd>
+          </div>
+          <div class="spec-row">
+            <dt>Transport</dt><span class="spec-dots" aria-hidden="true"></span><dd>inclus, mereu</dd>
+          </div>
+          <div class="spec-row">
+            <dt>Angajament</dt><span class="spec-dots" aria-hidden="true"></span><dd>niciunul</dd>
+          </div>
+        </dl>
+        <a href={cale('/abonament')} class="btn btn-primary">Pornește un abonament</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Prăjitoria, bandă pe toată lățimea ───────────────────────── -->
+  <section class="banda-foto" aria-labelledby="prajitoria-titlu">
+    <Image
+      class="banda-fundal"
+      src={prajitoriaLat}
+      alt="Atelierul prăjitoriei seara, cu toba de prăjire și bancul de lucru"
+      widths={[900, 1400, 2000]}
+      sizes="100vw"
+      loading="lazy"
+    />
+    <div class="banda-voal" aria-hidden="true"></div>
+    <div class="shell banda-continut">
+      <p class="field-label field-clar">Prăjitoria</p>
+      <h2 id="prajitoria-titlu">Douăsprezece kilograme o dată, ca să putem da înapoi.</h2>
+      <p>
+        Prăjim pe o tobă cu tambur de 12 kg. La fiecare șarjă înregistrăm temperatura de încărcare,
+        minutul primului pocnet și timpul total. Dacă un lot iese altfel decât data trecută, avem
+        unde să ne uităm și ce să corectăm.
+      </p>
+      <a href={cale('/prajitoria')} class="btn btn-clar">Vezi cum lucrăm</a>
+    </div>
+  </section>
+
+  <!-- ── Rețete ───────────────────────────────────────────────────── -->
+  <section class="sectiune" aria-labelledby="retete-titlu">
+    <div class="shell">
+      <div class="sectiune-cap rand">
+        <div>
+          <p class="field-label">Ghid de preparare</p>
+          <h2 id="retete-titlu">Trei rețete de la care să pornești</h2>
+        </div>
+        <a href={cale('/ghid')} class="link-rule">Ghidul complet</a>
+      </div>
+
+      <div class="retete">
+        {
+          retete.map((r) => (
+            <article class="reteta">
+              <h3>{r.metoda}</h3>
+              <p class="reteta-pentru">{r.pentru}</p>
+              <dl>
+                {r.randuri.map(([k, v]) => (
+                  <div class="spec-row">
+                    <dt>{k}</dt>
+                    <span class="spec-dots" aria-hidden="true" />
+                    <dd>{v}</dd>
+                  </div>
+                ))}
+              </dl>
+            </article>
+          ))
+        }
+        <figure class="reteta-foto">
+          <Image
+            src={macinare}
+            alt="Trei măcinări de cafea așezate una lângă alta, de la grosier la fin"
+            widths={[420, 640, 900]}
+            sizes="(min-width: 1000px) 24vw, (min-width: 640px) 46vw, 100vw"
+            loading="lazy"
+          />
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Recenzii ─────────────────────────────────────────────────── -->
+  <section class="sectiune sectiune-adanca" aria-labelledby="recenzii-titlu">
+    <div class="shell">
+      <div class="sectiune-cap">
+        <p class="field-label">Ce ne scriu</p>
+        <h2 id="recenzii-titlu">Din e-mailurile primite anul ăsta</h2>
+      </div>
+      <ul class="recenzii">
+        {
+          recenzii.map((r) => (
+            <li class="recenzie">
+              <blockquote>{r.text}</blockquote>
+              <p class="recenzie-autor">
+                {r.nume} <span>· {r.oras}</span>
+              </p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <Intrebari />
+  <Newsletter />
+</Baza>
+
+<style>
+  /* ── Hero ─────────────────────────────────────────────────────── */
+  .hero {
+    position: relative;
+    isolation: isolate;
+    display: grid;
+    align-items: center;
+    min-height: min(30rem, 58svh);
+    background: #1a120c;
+  }
+  .hero :global(.hero-fundal) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -2;
+  }
+  .hero-voal {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background:
+      linear-gradient(
+        to right,
+        rgb(12 10 8 / 0.9) 0%,
+        rgb(12 10 8 / 0.78) 34%,
+        rgb(12 10 8 / 0.4) 68%,
+        rgb(12 10 8 / 0.18) 100%
+      ),
+      linear-gradient(to bottom, rgb(12 10 8 / 0.5) 0%, transparent 40%, rgb(12 10 8 / 0.45) 100%);
+  }
+
+  .hero-grila {
+    display: grid;
+    gap: clamp(2rem, 4vw, 3rem);
+    align-items: center;
+    padding-block: clamp(2.5rem, 6vw, 4.5rem);
+  }
+  /* Cardul intră lângă titlu abia când rămâne loc pentru amândouă. Sub prag,
+     stă dedesubt pe toată lățimea. */
+  @media (min-width: 1120px) {
+    .hero-grila {
+      grid-template-columns: minmax(0, 1fr) clamp(21rem, 30vw, 26.5rem);
+      gap: clamp(2.5rem, 5vw, 4rem);
+    }
+  }
+  .hero-continut {
+    color: var(--color-paper);
+  }
+  .hero-continut h1 {
+    margin: 1.35rem 0 0;
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    line-height: 1;
+    letter-spacing: -0.026em;
+    max-width: 20ch;
+    color: var(--color-paper);
+  }
+  .hero-sub {
+    margin: 1.35rem 0 0;
+    font-size: clamp(1.0625rem, 1.5vw, 1.1875rem);
+    color: color-mix(in srgb, var(--color-paper) 86%, transparent);
+    max-width: 50ch;
+  }
+  .hero-butoane {
+    margin-top: 2rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+  /* Pe telefon, butoane de lățime egală: altfel ies două dreptunghiuri
+     nepotrivite, aliniate la stânga. */
+  @media (max-width: 639px) {
+    .hero-butoane .btn {
+      flex: 1 1 100%;
+    }
+  }
+
+  /* ── Cardul de ofertă din hero ────────────────────────────────── */
+  .oferta {
+    display: grid;
+    gap: 0.95rem;
+    padding: 1.15rem;
+    border-radius: 16px;
+    background: var(--color-paper-raised);
+    /* Cardul stă pe o fotografie întunecată: are nevoie de un contur de accent
+       și de o umbră adâncă, altfel se pierde în fundal. */
+    border: 1px solid color-mix(in srgb, var(--color-accent) 30%, transparent);
+    box-shadow:
+      0 0 0 4px rgb(250 246 240 / 0.14),
+      0 26px 60px -20px rgb(0 0 0 / 0.85);
+    text-decoration: none;
+    color: var(--color-ink);
+    transition:
+      transform 220ms var(--ease-out-soft),
+      box-shadow 220ms var(--ease-out-soft);
+  }
+  .oferta:hover {
+    transform: translateY(-4px);
+    box-shadow:
+      0 0 0 5px rgb(250 246 240 / 0.2),
+      0 32px 66px -20px rgb(0 0 0 / 0.9);
+  }
+
+  .oferta-cap {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--color-rule);
+  }
+  .oferta-eticheta {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--color-accent-dark);
+  }
+  .oferta-procent {
+    flex: none;
+    padding: 0.3rem 0.6rem;
+    border-radius: 6px;
+    background: var(--color-accent);
+    color: #fff;
+    font-size: 0.9375rem;
+    font-weight: 800;
+    line-height: 1.2;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Poza și textul stau alături: la lățime mică, un cadru înalt lasă punga
+     minusculă și înghesuie textul pe o coloană îngustă. */
+  .oferta-corp {
+    display: grid;
+    grid-template-columns: 6.5rem minmax(0, 1fr);
+    gap: 0.95rem;
+    align-items: center;
+  }
+  @media (min-width: 1120px) {
+    .oferta-corp {
+      grid-template-columns: 9rem minmax(0, 1fr);
+      gap: 1.15rem;
+    }
+  }
+  .oferta-foto {
+    display: block;
+    aspect-ratio: 1;
+    border-radius: 9px;
+    overflow: hidden;
+    background: #241f1b;
+  }
+  /* Decupaj pătrat dintr-o poză 4:5: taie sus și jos, deci punga se apropie. */
+  .oferta-foto img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 46%;
+  }
+
+  .oferta-text {
+    display: grid;
+    gap: 0.1rem;
+    min-width: 0;
+  }
+  .oferta-nume {
+    font-size: 1.375rem;
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.018em;
+  }
+  .oferta-regiune {
+    font-size: 0.8125rem;
+    line-height: 1.35;
+    color: var(--color-ink-faint);
+  }
+  .oferta-preturi {
+    display: flex;
+    align-items: baseline;
+    gap: 0.45rem;
+    margin-top: 0.4rem;
+  }
+  .oferta-preturi s {
+    font-size: 0.9375rem;
+    color: var(--color-ink-faint);
+    text-decoration-thickness: 1px;
+  }
+  .oferta-preturi strong {
+    font-size: 1.75rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--color-accent-dark);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .oferta-motiv {
+    font-size: 0.8125rem;
+    line-height: 1.45;
+    color: var(--color-ink-muted);
+  }
+  .oferta-buton {
+    display: block;
+    padding: 0.8rem 1rem;
+    border-radius: 9px;
+    background: var(--color-ink);
+    color: var(--color-paper);
+    font-size: 0.9375rem;
+    font-weight: 650;
+    text-align: center;
+  }
+  .oferta:hover .oferta-buton {
+    background: var(--color-accent-dark);
+  }
+
+  /* ── Banda de oferte de sub hero ──────────────────────────────── */
+  .banda-oferte {
+    display: block;
+    background: var(--color-accent-slab);
+    border-bottom: 1px solid color-mix(in srgb, var(--color-accent) 22%, transparent);
+    color: var(--color-ink-muted);
+    text-decoration: none;
+    font-size: 0.9375rem;
+  }
+  .banda-oferte-rand {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 0.85rem;
+    padding-block: 0.85rem;
+  }
+  .banda-oferte-punct {
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background: var(--color-accent);
+    flex: none;
+  }
+  .banda-oferte strong {
+    color: var(--color-accent-dark);
+    font-weight: 700;
+  }
+  .banda-oferte-link {
+    margin-left: auto;
+    color: var(--color-accent-dark);
+    font-weight: 600;
+    white-space: nowrap;
+    border-bottom: 1px solid color-mix(in srgb, var(--color-accent) 40%, transparent);
+  }
+  .banda-oferte:hover .banda-oferte-link {
+    border-bottom-color: currentColor;
+  }
+
+  /* ── Structură de secțiune ────────────────────────────────────── */
+  .sectiune {
+    padding-block: clamp(3rem, 6vw, 5rem);
+  }
+  .sectiune-adanca {
+    background: var(--color-paper-deep);
+    border-block: 1px solid var(--color-rule);
+  }
+  .sectiune-cap {
+    margin-bottom: clamp(1.75rem, 3.5vw, 2.5rem);
+  }
+  .sectiune-cap.rand {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    justify-content: space-between;
+    gap: 1rem 2rem;
+  }
+  .sectiune-cap h2 {
+    margin: 0.5rem 0 0;
+    font-size: clamp(1.9rem, 4vw, 2.75rem);
+    max-width: 26ch;
+  }
+  .sectiune-intro {
+    margin: 1rem 0 0;
+    color: var(--color-ink-muted);
+    max-width: 52ch;
+  }
+
+  /* ── Categorii, dale foto ─────────────────────────────────────── */
+  .categorii {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.75rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  @media (min-width: 620px) {
+    .categorii {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1rem;
+    }
+  }
+  @media (min-width: 1000px) {
+    .categorii {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+    }
+  }
+  .categorie {
+    position: relative;
+    display: block;
+    aspect-ratio: 3 / 4;
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    background: #1a1714;
+    text-decoration: none;
+  }
+  .categorie :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 560ms var(--ease-out-soft);
+  }
+  .categorie:hover :global(img),
+  .categorie:focus-visible :global(img) {
+    transform: scale(1.06);
+  }
+  .categorie-voal {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to top,
+      rgb(12 10 8 / 0.86) 0%,
+      rgb(12 10 8 / 0.28) 54%,
+      rgb(12 10 8 / 0.06) 100%
+    );
+  }
+  .categorie-text {
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    display: grid;
+    gap: 0.15rem;
+    padding: 0.85rem 0.85rem 0.9rem;
+    color: var(--color-paper);
+  }
+  .categorie-titlu {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    line-height: 1.25;
+  }
+  .categorie-nota {
+    font-size: 0.75rem;
+    color: color-mix(in srgb, var(--color-paper) 72%, transparent);
+  }
+
+  .field-accent {
+    color: var(--color-stamp);
+  }
+
+  /* ── Alege după gust, dale foto ───────────────────────────────── */
+  .profile {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: clamp(1.5rem, 3vw, 2.25rem);
+  }
+  @media (min-width: 760px) {
+    .profile {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  .profil {
+    position: relative;
+    display: block;
+    aspect-ratio: 4 / 3;
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    background: #1a1714;
+    text-decoration: none;
+  }
+  @media (min-width: 760px) {
+    .profil {
+      aspect-ratio: 3 / 4;
+    }
+  }
+  .profil :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 620ms var(--ease-out-soft);
+  }
+  .profil:hover :global(img),
+  .profil:focus-visible :global(img) {
+    transform: scale(1.045);
+  }
+  .profil-voal {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to top,
+      rgb(12 10 8 / 0.84) 0%,
+      rgb(12 10 8 / 0.18) 52%,
+      transparent 78%
+    );
+  }
+  .profil-text {
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    display: grid;
+    gap: 0.3rem;
+    padding: 1.25rem;
+    color: var(--color-paper);
+  }
+  .profil-titlu {
+    font-size: clamp(1.35rem, 2.2vw, 1.6rem);
+    line-height: 1.15;
+  }
+  .profil-numar {
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: color-mix(in srgb, var(--color-paper) 74%, transparent);
+  }
+  .profil-explicatie {
+    margin: 0.9rem 0 0;
+    font-size: 0.9375rem;
+    line-height: 1.55;
+    color: var(--color-ink-muted);
+  }
+
+  /* ── Bandă foto pe toată lățimea ──────────────────────────────── */
+  .banda-foto {
+    position: relative;
+    isolation: isolate;
+    display: grid;
+    align-items: center;
+    min-height: min(30rem, 68svh);
+    background: #12100d;
+  }
+  .banda-foto :global(.banda-fundal) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -2;
+  }
+  .banda-voal {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(
+      to right,
+      rgb(12 10 8 / 0.9) 0%,
+      rgb(12 10 8 / 0.66) 52%,
+      rgb(12 10 8 / 0.34) 100%
+    );
+  }
+  .banda-continut {
+    padding-block: clamp(3.5rem, 7vw, 5.5rem);
+    color: var(--color-paper);
+  }
+  .banda-continut h2 {
+    margin: 0.6rem 0 0;
+    font-size: clamp(1.9rem, 4vw, 2.75rem);
+    max-width: 20ch;
+    color: var(--color-paper);
+  }
+  .banda-continut p {
+    margin: 1.15rem 0 0;
+    max-width: 48ch;
+    color: color-mix(in srgb, var(--color-paper) 80%, transparent);
+  }
+  .banda-continut .btn {
+    margin-top: 2rem;
+  }
+
+  /* ── Split foto / text ────────────────────────────────────────── */
+  .split {
+    display: grid;
+    gap: clamp(2rem, 4vw, 3.5rem);
+    align-items: center;
+  }
+  @media (min-width: 860px) {
+    .split {
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(3rem, 5vw, 5rem);
+    }
+  }
+  .split-foto {
+    margin: 0;
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    background: #1a1714;
+  }
+  .split-foto :global(img) {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+  }
+  .split-text h2 {
+    margin: 0.55rem 0 0;
+    font-size: clamp(1.75rem, 3.4vw, 2.5rem);
+    max-width: 20ch;
+  }
+  .split-text > p {
+    margin: 1rem 0 0;
+    color: var(--color-ink-muted);
+    max-width: 48ch;
+  }
+  .split-text .btn {
+    margin-top: 1.75rem;
+    display: inline-flex;
+  }
+  .mini-fisa {
+    margin: 1.75rem 0 0;
+    padding-top: 0.5rem;
+    border-top: 1px solid var(--color-rule);
+    max-width: 26rem;
+  }
+
+  /* ── Rețete ───────────────────────────────────────────────────── */
+  .retete {
+    display: grid;
+    gap: clamp(1.5rem, 3vw, 2.5rem);
+  }
+  @media (min-width: 640px) {
+    .retete {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 1000px) {
+    .retete {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+  .reteta {
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--color-rule-strong);
+  }
+  .reteta h3 {
+    margin: 0;
+    font-size: 1.5rem;
+  }
+  .reteta-pentru {
+    margin: 0.3rem 0 1rem;
+    font-size: 0.875rem;
+    color: var(--color-ink-muted);
+  }
+  .reteta-foto {
+    margin: 0;
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    background: #1a1714;
+  }
+  .reteta-foto :global(img) {
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 3 / 4;
+    object-fit: cover;
+  }
+
+  /* ── Nota din rândul de loturi mici ──────────────────────────── */
+  .nota-lot {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    padding: clamp(1.25rem, 3vw, 2rem);
+    border: 1px solid var(--color-rule);
+    border-radius: var(--radius-card);
+    background: var(--color-paper-deep);
+  }
+  .nota-lot h3 {
+    margin: 0.55rem 0 0;
+    font-size: clamp(1.35rem, 2.4vw, 1.75rem);
+    max-width: 18ch;
+  }
+  .nota-lot p:last-of-type {
+    margin: 0.9rem 0 1.5rem;
+    font-size: 0.9375rem;
+    color: var(--color-ink-muted);
+  }
+
+  /* ── Recenzii ─────────────────────────────────────────────────── */
+  .recenzii {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: clamp(1.75rem, 3.5vw, 3rem);
+  }
+  @media (min-width: 800px) {
+    .recenzii {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  .recenzie {
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--color-rule-strong);
+  }
+  .recenzie blockquote {
+    margin: 0;
+    font-size: 1.125rem;
+    line-height: 1.5;
+  }
+  .recenzie-autor {
+    margin: 1rem 0 0;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--color-ink-muted);
+  }
+  .recenzie-autor span {
+    color: var(--color-ink-faint);
+  }
+</style>

@@ -1,0 +1,302 @@
+/* Un singur family pe tot site-ul. Ierarhia vine din greutate și mărime,
+   nu din schimbare de font. */
+@import '@fontsource-variable/inter/wght.css';
+
+@import 'tailwindcss';
+@import './componente.css';
+
+@theme {
+  /* Paletă de cafea. Culorile sunt luate din materialul propriu-zis:
+     spumă și lapte pe fundal, boabă prăjită pe text, aramă de prăjire pe accent.
+     Toate perechile trec AA — cifrele sunt în README-DEMO.md. */
+
+  /* Spumă: cremă caldă, aproape lapte */
+  --color-paper: #faf6f0;
+  --color-paper-raised: #ffffff;
+  --color-paper-deep: #f0e6d8;
+  /* Crema propriu-zisă: doar suprafețe și benzi, niciodată text mic */
+  --color-crema: #e6d3b8;
+
+  /* Boabă prăjită: maro atât de închis încât citește ca negru cald */
+  --color-ink: #241a13;
+  --color-ink-muted: #5c483a;
+  --color-ink-faint: #74604f;
+
+  /* Linii, ca dungile de pe o cutie de carton */
+  --color-rule: #e4d7c4;
+  --color-rule-strong: #cbb99e;
+
+  /* Accentul: aramă de prăjire. Preț redus, badge, evidențierea din meniu.
+     5,26:1 pe fundal, 5,66:1 alb pe el. */
+  --color-accent: #9c5424;
+  --color-accent-dark: #8f4a1e;
+  --color-accent-slab: #f7ece1;
+
+  /* Verde de stoc, singura altă culoare din interfață */
+  --color-stoc: #3d6b46;
+
+  /* Alias istoric — tot accentul de aramă. */
+  --color-stamp: var(--color-accent);
+
+  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  /* Păstrate ca alias, ca să nu rămână referințe rupte: tot Inter. */
+  --font-display: var(--font-sans);
+  --font-mono: var(--font-sans);
+
+  --radius-card: 10px;
+
+  --ease-out-soft: cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+@layer base {
+  :root {
+    --header-h: 4.5rem;
+    --gutter: clamp(1.25rem, 5vw, 4.5rem);
+    color-scheme: light;
+  }
+
+  @media (min-width: 1024px) {
+    :root {
+      --header-h: 5rem;
+    }
+  }
+
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: calc(var(--cap-h, 8.4rem) + 1.5rem);
+    -webkit-text-size-adjust: 100%;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+    }
+  }
+
+  body {
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.65;
+    font-synthesis-weight: none;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-sans);
+    font-weight: 650;
+    line-height: 1.14;
+    letter-spacing: -0.018em;
+    text-wrap: balance;
+  }
+  h1 {
+    letter-spacing: -0.028em;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  /* Focus vizibil peste tot, fără excepții */
+  :focus-visible {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  ::selection {
+    background: var(--color-ink);
+    color: var(--color-paper);
+  }
+
+  img,
+  svg,
+  video {
+    display: block;
+    max-width: 100%;
+  }
+
+  /* Astro își împachetează insulele într-un <astro-island>, care e inline și
+     cu înălțime zero. Asta rupe blocul-container al copiilor `position: sticky`.
+     `display: contents` îl scoate din layout, fără să schimbe nimic altceva. */
+  astro-island {
+    display: contents;
+  }
+}
+
+@layer components {
+  /* Coloana de conținut */
+  .shell {
+    width: 100%;
+    max-width: 84rem;
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+  }
+
+  /* Eticheta mică de deasupra unui titlu. NU uppercase cu letter-spacing enorm —
+     e o notație de fișă tehnică: mono, mic, cu o linie scurtă înaintea ei. */
+  .field-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.075em;
+    text-transform: uppercase;
+    color: var(--color-ink-faint);
+  }
+
+  /* Rândurile din fișa de cupping: nume ... valoare, legate cu puncte */
+  .spec-row {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: baseline;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    line-height: 2;
+  }
+  .spec-row > dt {
+    color: var(--color-ink-muted);
+    font-size: 0.875rem;
+  }
+  .spec-row > .spec-dots {
+    border-bottom: 1px dotted var(--color-rule-strong);
+    transform: translateY(-0.25em);
+  }
+  .spec-row > dd {
+    color: var(--color-ink);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55rem;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    padding: 0.8125rem 1.375rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    letter-spacing: 0.005em;
+    cursor: pointer;
+    transition:
+      background-color 180ms var(--ease-out-soft),
+      color 180ms var(--ease-out-soft),
+      border-color 180ms var(--ease-out-soft),
+      transform 180ms var(--ease-out-soft);
+  }
+  .btn:active {
+    transform: translateY(1px);
+  }
+  .btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  .btn-primary {
+    background: var(--color-ink);
+    color: var(--color-paper);
+  }
+  .btn-primary:hover:not(:disabled) {
+    background: #2e2820;
+  }
+
+  .btn-outline {
+    border-color: var(--color-rule-strong);
+    color: var(--color-ink);
+    background: transparent;
+  }
+  .btn-outline:hover:not(:disabled) {
+    border-color: var(--color-ink);
+    background: color-mix(in srgb, var(--color-ink) 4%, transparent);
+  }
+
+  /* Variante pentru fundal foto întunecat */
+  .btn-clar {
+    background: var(--color-paper);
+    color: var(--color-ink);
+  }
+  .btn-clar:hover:not(:disabled) {
+    background: #fffdf8;
+  }
+
+  .btn-fantoma {
+    border-color: color-mix(in srgb, var(--color-paper) 48%, transparent);
+    color: var(--color-paper);
+    background: transparent;
+  }
+  .btn-fantoma:hover:not(:disabled) {
+    border-color: var(--color-paper);
+    background: color-mix(in srgb, var(--color-paper) 12%, transparent);
+  }
+
+  .field-clar {
+    color: color-mix(in srgb, var(--color-paper) 68%, transparent);
+  }
+
+  .stamp-clar {
+    color: #f0b8a6;
+    border-color: color-mix(in srgb, #f0b8a6 48%, transparent);
+    background: rgb(12 10 8 / 0.28);
+  }
+
+  /* Focus vizibil și pe fundal întunecat */
+  .hero :focus-visible,
+  .banda-foto :focus-visible,
+  .subsol :focus-visible {
+    outline-color: var(--color-paper);
+  }
+
+  /* Link de text cu subliniere care crește la hover */
+  .link-rule {
+    color: var(--color-ink);
+    text-decoration: none;
+    background-image: linear-gradient(currentColor, currentColor);
+    background-size: 100% 1px;
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    padding-bottom: 2px;
+    transition: background-size 200ms var(--ease-out-soft);
+  }
+  .link-rule:hover {
+    background-size: 100% 2px;
+  }
+
+  /* Ștampila de dată — singurul loc unde apare roșul, plus stările active */
+  .stamp {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-stamp);
+    border: 1px solid color-mix(in srgb, var(--color-stamp) 35%, transparent);
+    border-radius: 3px;
+    padding: 0.3rem 0.55rem 0.28rem;
+  }
+
+  .rule-top {
+    border-top: 1px solid var(--color-rule);
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+}

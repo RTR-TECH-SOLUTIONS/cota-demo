@@ -1,0 +1,367 @@
+---
+import { Image } from 'astro:assets';
+import Baza from '../../layouts/Baza.astro';
+import CatalogCafele from '../../components/CatalogCafele';
+import Newsletter from '../../components/Newsletter.astro';
+import { imaginiPungi } from '../../lib/pungi';
+import { cafele, ultimaPrajire, dataLunga } from '../../data/cafele';
+import { toateAltele, procentReducere } from '../../data/altele';
+import bannerFoto from '../../assets/foto/espresso.jpg';
+import { cale } from '../../lib/cale';
+
+const imagini = await imaginiPungi([340, 680]);
+const prajireText = dataLunga(ultimaPrajire());
+
+const cafeleReduse = cafele.filter((c) => procentReducere(c.pret250, c.pretVechi) !== null);
+const alteleReduse = toateAltele.filter((p) => procentReducere(p.pret, p.pretVechi) !== null);
+const reducereMax = Math.max(
+  ...cafeleReduse.map((c) => procentReducere(c.pret250, c.pretVechi)!),
+  ...alteleReduse.map((p) => procentReducere(p.pret, p.pretVechi)!),
+);
+const nrReduse = cafeleReduse.length + alteleReduse.length;
+
+// Blocul de text de sub grilă: răspunde la întrebările pe care le pun oamenii
+// înainte să cumpere. La proiectul real, aici intră și keywordurile din research.
+const intrebari = [
+  {
+    q: 'Ce diferență este între cafeaua boabe și cea măcinată?',
+    a: 'Boabele își țin aroma săptămâni întregi, pentru că suprafața expusă la aer e mică. Odată măcinată, cafeaua își pierde partea de sus în șapte–zece zile, oricât de bine ai închide punga. Dacă ai râșniță, ia boabe. Dacă nu, o macinăm noi pentru metoda ta, în ziua expedierii.',
+  },
+  {
+    q: 'Cum aleg cafeaua potrivită pentru espresso?',
+    a: 'Caută corp gros și intensitate 4 sau 5, de obicei loturi naturale din Brazilia sau blendul de casă. Cafelele spălate din Africa, cu aciditate mare, sunt greu de scos la espresso dacă nu ai mașină cu control de temperatură. Filtrul „Prăjită pentru espresso" din stânga îți lasă doar loturile potrivite.',
+  },
+  {
+    q: 'Ce înseamnă procesul de la fermă?',
+    a: 'E felul în care se scoate bobul din fruct. Spălat dă limpezime și aciditate curată; natural dă corp și fruct copt; honey stă la mijloc; anaerobul fermentează fără oxigen și dă arome intense, uneori sălbatice. Procesul schimbă gustul mai mult decât originea.',
+  },
+  {
+    q: 'Cât de proaspătă e cafeaua pe care o primesc?',
+    a: `Prăjim marți și vineri, iar pe fiecare pungă e ștampilată data prăjirii. Ultima prăjire a fost ${prajireText}. Comenzile plasate până la 11:00 în ziua de prăjire pleacă în aceeași zi.`,
+  },
+  {
+    q: 'Ce gramaj să aleg?',
+    a: 'Punga de 250 g ajunge pentru circa 16 cafele de filtru sau 18 espresso, adică două–trei săptămâni la o cafea pe zi. La 1 kg ieși cu circa 15% mai ieftin pe kilogram, dar o bei mai lent, deci ia varianta mare doar dacă bei zilnic.',
+  },
+  {
+    q: 'Livrați și în afara Brașovului?',
+    a: 'În toată țara, prin curier, în una–două zile lucrătoare. Transportul e gratuit peste 150 lei, iar sub prag costă 19,90 lei. Pentru cafenele și birouri livrăm în saci de 1 kg, cu preț de en-gros.',
+  },
+];
+---
+
+<Baza
+  titlu="Magazin de cafea online — Cotă prăjitorie Brașov"
+  descriere="Magazin online de cafea boabe de specialitate, prăjită în Brașov. Zece loturi din origini diferite, pentru espresso sau filtru, în pungi de 250 g și 1 kg."
+>
+  <!-- ── Banner de categorie ──────────────────────────────────────── -->
+  <section class="banner-categorie">
+    <Image
+      class="banner-categorie-fundal"
+      src={bannerFoto}
+      alt=""
+      widths={[900, 1400, 2000]}
+      sizes="100vw"
+      loading="eager"
+      fetchpriority="high"
+    />
+    <div class="banner-categorie-voal" aria-hidden="true"></div>
+    <div class="shell banner-categorie-text">
+      <p class="banner-supra">Prăjit {prajireText}</p>
+      <h1>Magazin de cafea online</h1>
+      <p class="banner-sub">
+        {cafele.length} loturi de specialitate, prăjite în Brașov marți și vineri, ambalate în
+        pungi de 250 g și 1 kg. Alege după aromă, corp și intensitate.
+      </p>
+      <a class="banner-oferta" href={cale('/promotii')}>
+        <span class="banner-oferta-procent">−{reducereMax}%</span>
+        <span>{nrReduse} produse la reducere săptămâna asta</span>
+        <span class="banner-oferta-sageata" aria-hidden="true">→</span>
+      </a>
+    </div>
+  </section>
+
+  <nav class="firimituri-bara" aria-label="Ai ajuns aici prin">
+    <div class="shell firimituri">
+      <a href={cale('/')}>Acasă</a>
+      <span aria-hidden="true">/</span>
+      <span aria-current="page">Magazin cafea</span>
+    </div>
+  </nav>
+
+  <section class="continut">
+    <div class="shell">
+      <CatalogCafele cafele={cafele} imagini={imagini} client:load />
+    </div>
+  </section>
+
+  <!-- ── Text de categorie ────────────────────────────────────────── -->
+  <section class="text-categorie">
+    <div class="shell">
+      <p class="text-intro">
+        În magazinul nostru de cafea găsești loturi prăjite săptămâna asta, aduse din origini
+        diferite și pregătite pentru espresso sau filtru. Alege după aromă, corp și intensitate din
+        panoul de filtre, adaugă punga în coș și finalizezi comanda în câțiva pași.
+      </p>
+
+      <h2>De ce contează prospețimea cafelei</h2>
+      <p>
+        O cafea prăjită acum trei zile și una prăjită acum trei luni sunt două băuturi diferite,
+        chiar dacă e același lot. După prăjire, bobul degajă dioxid de carbon și își pierde treptat
+        compușii volatili — adică exact ce simți ca aromă. De aceea prăjim de două ori pe săptămână
+        și ștampilăm data pe fiecare etichetă, în loc să scriem un termen de valabilitate de doi ani.
+      </p>
+
+      <h2>Ce tipuri de cafea găsești la Cotă</h2>
+      <p>
+        Zece loturi, toate arabica, punctate peste 83 la masa de cupping. Fiecare are fișa lui:
+        cota la care a crescut, varietatea, procesul de la fermă și scorul. Le poți alege astfel:
+      </p>
+      <ul>
+        <li><strong>Cafea de origine</strong> — un singur lot, de la o singură fermă sau stație de spălare;</li>
+        <li><strong>Blend de casă</strong> — două origini compuse în prăjitorie, pentru espresso constant;</li>
+        <li><strong>Cafea decofeinizată</strong> — proces Sugarcane EA, fără solvenți chimici;</li>
+        <li><strong>Loturi experimentale</strong> — fermentări anaerobe, în cantități de câțiva saci.</li>
+      </ul>
+
+      <h2>Cum influențează originea profilul aromatic</h2>
+      <p>
+        Solul, altitudinea, clima și procesarea contează mai mult decât țara scrisă pe pungă. La cotă
+        mare bobul crește lent și iese mai dens, cu aciditate mai vie: de aici notele de citrice și
+        flori ale Etiopiei sau ale Kenyei. La cotă joasă, ca în Brazilia, bobul iese mai moale și dă
+        corp, ciocolată și nucă. Filtrul de cotă din stânga îți arată exact diferența.
+      </p>
+
+      <h2>De ce să cumperi de la o prăjitorie, nu din raft</h2>
+      <p>
+        Într-un magazin de cafea online al unei prăjitorii știi cine a prăjit lotul, când și pe ce
+        profil. Noi cumpărăm câțiva saci o dată, prăjim la comandă și trimitem în 24 de ore. Când un
+        lot se termină, nu îl înlocuim cu altceva sub același nume — apare pur și simplu altul, cu
+        fișa lui.
+      </p>
+    </div>
+  </section>
+
+  <!-- ── Întrebări frecvente ──────────────────────────────────────── -->
+  <section class="intrebari-categorie" aria-labelledby="faq-titlu">
+    <div class="shell">
+      <h2 id="faq-titlu">Întrebări frecvente</h2>
+      <div class="faq">
+        {
+          intrebari.map((i) => (
+            <details>
+              <summary>
+                <span>{i.q}</span>
+              </summary>
+              <p>{i.a}</p>
+            </details>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <Newsletter />
+</Baza>
+
+<style>
+  /* ── Banner de categorie ──────────────────────────────────────── */
+  .banner-categorie {
+    position: relative;
+    isolation: isolate;
+    display: grid;
+    align-items: center;
+    min-height: clamp(21rem, 42vw, 30rem);
+    background: #1a120c;
+  }
+  .banner-categorie :global(.banner-categorie-fundal) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 40%;
+    z-index: -2;
+  }
+  .banner-categorie-voal {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background:
+      radial-gradient(120% 90% at 50% 50%, rgb(20 12 7 / 0.42) 0%, rgb(20 12 7 / 0.78) 100%),
+      linear-gradient(to bottom, rgb(20 12 7 / 0.5), rgb(20 12 7 / 0.5));
+  }
+  .banner-categorie-text {
+    padding-block: clamp(3rem, 7vw, 5rem);
+    text-align: center;
+    color: var(--color-paper);
+    display: grid;
+    justify-items: center;
+  }
+  .banner-supra {
+    margin: 0;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-crema);
+  }
+  .banner-categorie h1 {
+    margin: 0.85rem 0 0;
+    font-size: clamp(2.25rem, 6vw, 4.25rem);
+    line-height: 1.05;
+    color: var(--color-paper);
+    text-shadow: 0 2px 24px rgb(12 8 4 / 0.55);
+  }
+  .banner-sub {
+    margin: 1.15rem 0 0;
+    max-width: 56ch;
+    font-size: clamp(1rem, 1.4vw, 1.125rem);
+    color: color-mix(in srgb, var(--color-paper) 84%, transparent);
+  }
+
+  /* Oferta rămâne în hero, ca să nu mai fie o a doua bandă întunecată. */
+  .banner-oferta {
+    margin-top: 1.85rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.5rem 1rem 0.5rem 0.5rem;
+    border-radius: 999px;
+    background: rgb(250 246 240 / 0.14);
+    border: 1px solid rgb(250 246 240 / 0.3);
+    backdrop-filter: blur(6px);
+    color: var(--color-paper);
+    text-decoration: none;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    transition:
+      background-color 180ms var(--ease-out-soft),
+      border-color 180ms var(--ease-out-soft);
+  }
+  .banner-oferta:hover {
+    background: rgb(250 246 240 / 0.22);
+    border-color: rgb(250 246 240 / 0.55);
+  }
+  .banner-oferta-procent {
+    padding: 0.28rem 0.6rem;
+    border-radius: 999px;
+    background: var(--color-accent);
+    color: #fff;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+  .banner-oferta-sageata {
+    transition: transform 180ms var(--ease-out-soft);
+  }
+  .banner-oferta:hover .banner-oferta-sageata {
+    transform: translateX(3px);
+  }
+
+  .firimituri-bara {
+    border-bottom: 1px solid var(--color-rule);
+    background: var(--color-paper-raised);
+  }
+  .firimituri {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding-block: 0.7rem;
+    font-size: 0.8125rem;
+    color: var(--color-ink-faint);
+  }
+  .firimituri a {
+    color: var(--color-ink-muted);
+    text-decoration: none;
+  }
+  .firimituri a:hover {
+    color: var(--color-ink);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .continut {
+    padding-block: clamp(2rem, 4vw, 3rem) clamp(2.5rem, 5vw, 4rem);
+  }
+
+  /* ── Text de categorie ────────────────────────────────────────── */
+  .text-categorie {
+    padding-block: clamp(2.5rem, 5vw, 4rem);
+    border-top: 1px solid var(--color-rule);
+    background: var(--color-paper-deep);
+  }
+  .text-categorie .shell > * {
+    max-width: 68ch;
+  }
+  .text-intro {
+    margin: 0;
+    font-size: 1.0625rem;
+    color: var(--color-ink-muted);
+  }
+  .text-categorie h2 {
+    margin: 2rem 0 0;
+    font-size: clamp(1.35rem, 2.6vw, 1.75rem);
+  }
+  .text-categorie p {
+    margin: 0.75rem 0 0;
+    color: var(--color-ink-muted);
+  }
+  .text-categorie ul {
+    margin: 0.75rem 0 0;
+    padding-left: 1.15rem;
+    color: var(--color-ink-muted);
+    display: grid;
+    gap: 0.4rem;
+  }
+  .text-categorie strong {
+    color: var(--color-ink);
+  }
+
+  /* ── Întrebări frecvente ──────────────────────────────────────── */
+  .intrebari-categorie {
+    padding-block: clamp(2.5rem, 5vw, 4rem);
+    border-top: 1px solid var(--color-rule);
+  }
+  .intrebari-categorie h2 {
+    margin: 0 0 1.5rem;
+    font-size: clamp(1.6rem, 3.2vw, 2.25rem);
+  }
+  .faq {
+    border-top: 1px solid var(--color-rule);
+    max-width: 62rem;
+  }
+  details {
+    border-bottom: 1px solid var(--color-rule);
+  }
+  summary {
+    cursor: pointer;
+    padding-block: 1.15rem;
+    font-size: 1.0625rem;
+    font-weight: 500;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1.5rem;
+  }
+  summary::-webkit-details-marker {
+    display: none;
+  }
+  summary::after {
+    content: '+';
+    font-size: 1.2rem;
+    color: var(--color-accent);
+    flex: none;
+  }
+  details[open] summary {
+    font-weight: 650;
+  }
+  details[open] summary::after {
+    content: '−';
+  }
+  details p {
+    margin: 0 0 1.35rem;
+    color: var(--color-ink-muted);
+    max-width: 70ch;
+  }
+</style>

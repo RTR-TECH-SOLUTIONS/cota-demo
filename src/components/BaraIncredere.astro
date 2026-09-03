@@ -1,0 +1,146 @@
+---
+// Bara de încredere de sub hero. Textele sunt scurte intenționat: pe patru
+// coloane, orice frază mai lungă de un rând se rupe cu cuvinte orfane.
+const puncte = [
+  {
+    titlu: 'Prăjită la comandă',
+    text: 'Marți și vineri, proaspătă',
+    cale: 'M3 15c2-4 5-4 7 0s5 4 7 0M6 5v4M10 4v5M14 5v4',
+  },
+  {
+    titlu: 'Livrare 24 – 48 h',
+    text: 'Gratuit peste 150 lei',
+    cale: 'M2 6h9v7H2zM11 8h4l2 2.5V13h-6zM5 15.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3ZM14 15.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z',
+  },
+  {
+    titlu: 'Plată securizată',
+    text: 'Card sau ramburs la curier',
+    cale: 'M10 2.5 16.5 5v4.5c0 3.4-2.6 6.4-6.5 8-3.9-1.6-6.5-4.6-6.5-8V5L10 2.5ZM7.2 9.8 9.4 12l3.8-3.8',
+  },
+  {
+    titlu: 'Retur în 14 zile',
+    text: 'La pungile nedesfăcute',
+    cale: 'M4 9a6 6 0 1 1 1.9 4.4M4 5.5V9h3.5',
+  },
+];
+---
+
+<section class="incredere" aria-label="De ce să comanzi de la noi">
+  <ul class="shell incredere-rand">
+    {
+      puncte.map((p) => (
+        <li>
+          <span class="incredere-icon" aria-hidden="true">
+            <svg viewBox="0 0 20 20">
+              <path
+                d={p.cale}
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.4"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </span>
+          <span class="incredere-text">
+            <strong>{p.titlu}</strong>
+            <span>{p.text}</span>
+          </span>
+        </li>
+      ))
+    }
+  </ul>
+</section>
+
+<style>
+  .incredere {
+    background: var(--color-paper-deep);
+    border-bottom: 1px solid var(--color-rule);
+  }
+  .incredere-rand {
+    list-style: none;
+    /* `margin: 0` ar anula `margin-inline: auto` din .shell și bara ar rămâne
+       lipită de stânga pe ecrane late. Resetăm doar pe verticală. */
+    margin-block: 0;
+    display: grid;
+    gap: 0;
+    padding-block: 0;
+  }
+  .incredere-rand li {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding-block: 1rem;
+    border-bottom: 1px solid var(--color-rule);
+  }
+  .incredere-rand li:last-child {
+    border-bottom: 0;
+  }
+
+  @media (min-width: 640px) {
+    .incredere-rand {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: clamp(1.5rem, 3vw, 2.5rem);
+    }
+    /* Fiecare punct stă centrat în coloana lui. */
+    .incredere-rand li {
+      justify-content: center;
+    }
+    .incredere-rand li:nth-last-child(-n + 2) {
+      border-bottom: 0;
+    }
+  }
+
+  @media (min-width: 1060px) {
+    .incredere-rand {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      column-gap: 0;
+    }
+    .incredere-rand li {
+      padding-block: 1.15rem;
+      padding-inline: clamp(1rem, 2vw, 1.75rem);
+      border-bottom: 0;
+      /* Despărțitoare subțiri între coloane, ca la bara unui magazin. */
+      border-left: 1px solid var(--color-rule);
+    }
+    .incredere-rand li:first-child {
+      padding-left: 0;
+      border-left: 0;
+    }
+    .incredere-rand li:last-child {
+      padding-right: 0;
+    }
+  }
+
+  .incredere-icon {
+    display: grid;
+    place-items: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    flex: none;
+    border-radius: 999px;
+    background: var(--color-paper-raised);
+    border: 1px solid var(--color-rule);
+    color: var(--color-accent);
+  }
+  .incredere-icon svg {
+    width: 19px;
+    height: 19px;
+  }
+
+  .incredere-text {
+    display: grid;
+    gap: 0.1rem;
+    min-width: 0;
+  }
+  .incredere-text strong {
+    font-size: 0.9375rem;
+    font-weight: 650;
+    line-height: 1.3;
+  }
+  .incredere-text span {
+    font-size: 0.8125rem;
+    line-height: 1.35;
+    color: var(--color-ink-muted);
+  }
+</style>

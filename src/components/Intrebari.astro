@@ -1,0 +1,139 @@
+---
+import { cale } from '../lib/cale';
+// Întrebările pe care le primim efectiv. La proiectul real, blocul ăsta primește
+// și JSON-LD FAQPage — vezi README-DEMO.md.
+const intrebari = [
+  {
+    q: 'Ce înseamnă „cafea de specialitate"?',
+    a: 'Cafea arabica dintr-un lot cu origine cunoscută, punctată peste 80 la cupping și prăjită în loturi mici, ca să iasă gustul lotului, nu gustul prăjirii. Pe fiecare pungă scriem ferma, cota, procesul și scorul, ca să poți verifica ce cumperi.',
+  },
+  {
+    q: 'Cafea boabe sau măcinată?',
+    a: 'Boabele își țin prospețimea săptămâni, cafeaua măcinată se oxidează în câteva zile. Dacă ai râșniță, ia boabe. Dacă nu, o macinăm noi pentru metoda ta la momentul ambalării — alegi măcinarea din pagina produsului.',
+  },
+  {
+    q: 'Cum aleg cafeaua dacă nu știu de unde să încep?',
+    a: 'Alege după gust, nu după origine. Fructat și viu dacă bei filtru și îți place aciditatea; echilibrat și dulce dacă vrei să fie bună și la filtru și la espresso; intens și cacao dacă bei espresso cu lapte. Filtrele din catalog fac exact asta.',
+  },
+  {
+    q: 'Cât rezistă o pungă de 250 g?',
+    a: 'Nedesfăcută, patru luni de la data prăjirii ștampilată pe etichetă. Odată deschisă, o bei în trei–patru săptămâni. Ține punga închisă, la temperatura camerei, departe de lumină — nu la frigider.',
+  },
+  {
+    q: 'Care e diferența dintre 250 g și 1 kg?',
+    a: 'Doar cantitatea și prețul pe kilogram: la 1 kg ieși cu circa 15% mai ieftin. Prăjim din același lot și în aceeași zi. Pentru cafenele și birouri livrăm în saci de 1 kg, cu preț de en-gros.',
+  },
+  {
+    q: 'În cât timp ajunge comanda?',
+    a: 'Prăjim marți și vineri. Comenzile plasate până la 11:00 în ziua de prăjire pleacă în aceeași zi, restul în următoarea zi de prăjire. Curierul livrează în una–două zile lucrătoare în toată țara.',
+  },
+  {
+    q: 'Ce fac dacă nu-mi place cafeaua?',
+    a: 'Scrie-ne întâi: de nouă ori din zece e o problemă de rețetă, nu de lot, și o rezolvăm în două mesaje. Dacă tot nu e pentru tine, primești altceva sau banii înapoi. La pungile nedesfăcute, returul e de 14 zile.',
+  },
+  {
+    q: 'Livrați și către cafenele?',
+    a: 'Da. Livrăm în saci de 1 kg către cafenele, restaurante și birouri, cu comandă minimă de 4 kg. Instalăm rețeta pe mașina voastră și revenim la fiecare schimbare de lot. Scrie-ne pe engros@cota.ro.',
+  },
+];
+---
+
+<section class="intrebari-sectiune" aria-labelledby="intrebari-titlu">
+  <div class="shell intrebari-grila">
+    <div class="intrebari-cap">
+      <p class="field-label">Întrebări</p>
+      <h2 id="intrebari-titlu">Ce ne întreabă lumea</h2>
+      <p class="intrebari-intro">
+        Dacă nu găsești răspunsul aici, scrie-ne pe WhatsApp. Răspundem în aceeași zi
+        lucrătoare, de obicei în două ore.
+      </p>
+      <a href={cale('/contact')} class="btn btn-outline">Scrie-ne</a>
+    </div>
+
+    <div class="intrebari-lista">
+      {
+        intrebari.map((i) => (
+          <details>
+            <summary>
+              <span>{i.q}</span>
+            </summary>
+            <p>{i.a}</p>
+          </details>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .intrebari-sectiune {
+    padding-block: clamp(3.25rem, 6.5vw, 5.5rem);
+    border-top: 1px solid var(--color-rule);
+  }
+  .intrebari-grila {
+    display: grid;
+    gap: clamp(2rem, 4vw, 3.5rem);
+    align-items: start;
+  }
+  @media (min-width: 900px) {
+    .intrebari-grila {
+      grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+      gap: clamp(3rem, 6vw, 5rem);
+    }
+    .intrebari-cap {
+      position: sticky;
+      top: calc(var(--cap-h, 8.4rem) + 1.5rem);
+    }
+  }
+  .intrebari-cap h2 {
+    margin: 0.55rem 0 0;
+    font-size: clamp(1.75rem, 3.4vw, 2.5rem);
+    max-width: 20ch;
+  }
+  .intrebari-intro {
+    margin: 1rem 0 0;
+    color: var(--color-ink-muted);
+    max-width: 42ch;
+  }
+  .intrebari-cap .btn {
+    margin-top: 1.75rem;
+  }
+
+  .intrebari-lista {
+    border-top: 1px solid var(--color-rule);
+  }
+  details {
+    border-bottom: 1px solid var(--color-rule);
+  }
+  summary {
+    cursor: pointer;
+    padding-block: 1.15rem;
+    font-size: 1.0625rem;
+    font-weight: 500;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1.5rem;
+  }
+  summary::-webkit-details-marker {
+    display: none;
+  }
+  summary::after {
+    content: '+';
+    font-size: 1.15rem;
+    color: var(--color-ink-faint);
+    flex: none;
+  }
+  details[open] summary::after {
+    content: '–';
+  }
+  details[open] summary {
+    font-weight: 650;
+  }
+  details p {
+    margin: 0 0 1.35rem;
+    color: var(--color-ink-muted);
+    max-width: 68ch;
+  }
+</style>

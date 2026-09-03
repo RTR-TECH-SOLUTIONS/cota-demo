@@ -1,0 +1,365 @@
+---
+import { Image } from 'astro:assets';
+import Baza from '../../layouts/Baza.astro';
+import AdaugaInCos from '../../components/AdaugaInCos';
+import CardCafea from '../../components/CardCafea';
+import { imaginiPungi } from '../../lib/pungi';
+import { procentReducere } from '../../data/altele';
+import { cafele, PRAJIRI, PROFILE, ultimaPrajire, dataLunga, lei } from '../../data/cafele';
+import type { Cafea } from '../../data/cafele';
+
+import cupping from '../../assets/foto/cupping.jpg';
+import boabeVerzi from '../../assets/foto/boabe-verzi.jpg';
+import racire from '../../assets/foto/racire.jpg';
+import ferma from '../../assets/foto/ferma.jpg';
+import { cale } from '../../lib/cale';
+
+export function getStaticPaths() {
+  return cafele.map((cafea) => ({ params: { slug: cafea.slug }, props: { cafea } }));
+}
+
+const { cafea } = Astro.props as { cafea: Cafea };
+const prajireText = dataLunga(ultimaPrajire());
+const imagini = await imaginiPungi([420, 840, 1200]);
+const packshot = imagini[cafea.slug];
+const reducere = procentReducere(cafea.pret250, cafea.pretVechi);
+
+// Fotografia de context urmează procesul de la fermă, nu e pusă la întâmplare.
+const foto =
+  cafea.proces === 'Spălat'
+    ? { src: cupping, alt: 'Masa de cupping, cu boluri și linguri pregătite pentru degustare' }
+    : cafea.proces === 'Natural' || cafea.proces === 'Anaerob'
+      ? { src: ferma, alt: 'Terase de cafea pe versant, în lumina dimineții' }
+      : { src: boabeVerzi, alt: 'Boabe verzi de cafea ridicate din sacul de iută' };
+const fotoRacire = { src: racire, alt: 'Boabe proaspăt prăjite în tava de răcire' };
+
+const inrudite = cafele
+  .filter((c) => c.slug !== cafea.slug && c.profil === cafea.profil)
+  .slice(0, 3);
+
+const fisa: [string, string][] = [
+  ['Cotă', `${cafea.altitudine.toLocaleString('ro-RO')} m`],
+  ['Regiune', cafea.regiune],
+  ['Producător', cafea.producator],
+  ['Varietate', cafea.varietate],
+  ['Proces', cafea.proces],
+  ['Prăjire', PRAJIRI[cafea.prajire]],
+  ['Scor de cupping', `${cafea.scor.toString().replace('.', ',')} / 100`],
+  ['Prăjit la', prajireText],
+];
+---
+
+<Baza
+  titlu={`${cafea.origine}, ${cafea.regiune} — Cotă prăjitorie`}
+  descriere={`${cafea.origine}, ${cafea.regiune}. ${cafea.note.join(', ')}. Cotă ${cafea.altitudine} m, proces ${cafea.proces}. Pungă de 250 g, prăjită în Brașov.`}
+>
+  <div class="shell">
+    <nav class="firimituri" aria-label="Ai ajuns aici prin">
+      <a href={cale('/')}>Acasă</a>
+      <span aria-hidden="true">/</span>
+      <a href={cale('/cafea')}>Cafea</a>
+      <span aria-hidden="true">/</span>
+      <span aria-current="page">{cafea.origine}</span>
+    </nav>
+
+    <div class="produs">
+      <div class="coloana-vizual">
+        <div class="vitrina">
+          <img
+            class="vitrina-punga"
+            src={packshot.src}
+            srcset={packshot.srcset}
+            sizes="(min-width: 900px) 46vw, 100vw"
+            width={packshot.latime}
+            height={packshot.inaltime}
+            alt={`Punga de 250 g cu ${cafea.origine}, ${cafea.regiune}, cu eticheta lotului`}
+            loading="eager"
+            fetchpriority="high"
+          />
+          {reducere !== null && <span class="badge badge-reducere">−{reducere}%</span>}
+          {cafea.limitata && <span class="badge badge-lot">Ediție limitată</span>}
+        </div>
+        <div class="context">
+          <figure class="foto-context">
+            <Image
+              src={foto.src}
+              alt={foto.alt}
+              widths={[320, 560, 800]}
+              sizes="(min-width: 900px) 22vw, 48vw"
+              loading="lazy"
+            />
+            <figcaption>{cafea.proces}</figcaption>
+          </figure>
+          <figure class="foto-context">
+            <Image
+              src={fotoRacire.src}
+              alt={fotoRacire.alt}
+              widths={[320, 560, 800]}
+              sizes="(min-width: 900px) 22vw, 48vw"
+              loading="lazy"
+            />
+            <figcaption>Prăjit {prajireText}</figcaption>
+          </figure>
+        </div>
+      </div>
+
+      <div class="coloana-info">
+        <p class="field-label">{PROFILE[cafea.profil].titlu}</p>
+        <h1>{cafea.origine}</h1>
+        <p class="regiune">{cafea.regiune}</p>
+
+        <p class="note">{cafea.note.join(' · ')}</p>
+
+        <p class:list={['pret', { redus: reducere !== null }]}>
+          {cafea.pretVechi && <s class="pret-vechi">{lei(cafea.pretVechi)} lei</s>}
+          {lei(cafea.pret250)} lei <span>/ punga de 250 g</span>
+        </p>
+        {
+          cafea.motivReducere && (
+            <p class="nota-reducere">
+              <strong>−{reducere}%</strong> {cafea.motivReducere}
+            </p>
+          )
+        }
+
+        <AdaugaInCos
+          client:load
+          slug={cafea.slug}
+          origine={cafea.origine}
+          regiune={cafea.regiune}
+          culoare={cafea.culoareEticheta}
+          pret250={cafea.pret250}
+          pret1000={cafea.pret1000}
+          stoc={cafea.stoc}
+        />
+
+        <section class="bloc" aria-labelledby="fisa-titlu">
+          <h2 id="fisa-titlu" class="field-label">Fișa lotului</h2>
+          <dl class="fisa-lot">
+            {
+              fisa.map(([k, v]) => (
+                <div class="spec-row">
+                  <dt>{k}</dt>
+                  <span class="spec-dots" aria-hidden="true" />
+                  <dd>{v}</dd>
+                </div>
+              ))
+            }
+          </dl>
+          {cafea.ecologic && <p class="nota-fisa">Certificat ecologic la origine.</p>}
+          {cafea.stoc <= 12 && <p class="nota-stoc">Au mai rămas {cafea.stoc} pungi din lot.</p>}
+        </section>
+
+        <section class="bloc" aria-labelledby="despre-titlu">
+          <h2 id="despre-titlu" class="field-label">De ce am cumpărat lotul ăsta</h2>
+          <p class="descriere">{cafea.descriere}</p>
+        </section>
+
+        <section class="bloc" aria-labelledby="metode-titlu">
+          <h2 id="metode-titlu" class="field-label">Merge bine la</h2>
+          <ul class="metode">
+            {cafea.metode.map((m) => <li>{m}</li>)}
+          </ul>
+          <a href={cale('/ghid')} class="link-rule">Vezi rețetele</a>
+        </section>
+      </div>
+    </div>
+
+    {
+      inrudite.length > 0 && (
+        <section class="inrudite" aria-labelledby="inrudite-titlu">
+          <div class="sectiune-cap">
+            <p class="field-label">Din același profil</p>
+            <h2 id="inrudite-titlu">{PROFILE[cafea.profil].titlu}</h2>
+          </div>
+          <div class="grila-cafele">
+            {inrudite.map((c) => <CardCafea client:visible cafea={c} imagine={imagini[c.slug]} />)}
+          </div>
+        </section>
+      )
+    }
+  </div>
+</Baza>
+
+<style>
+  .firimituri {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding-block: 1.5rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--color-ink-faint);
+  }
+  .firimituri a {
+    color: var(--color-ink-muted);
+    text-decoration: none;
+  }
+  .firimituri a:hover {
+    color: var(--color-ink);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .produs {
+    display: grid;
+    gap: clamp(2rem, 4vw, 3.5rem);
+    padding-bottom: clamp(3rem, 6vw, 5rem);
+  }
+  @media (min-width: 900px) {
+    .produs {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: clamp(3rem, 5vw, 5rem);
+      align-items: start;
+    }
+    .coloana-vizual {
+      position: sticky;
+      top: calc(var(--cap-h, 8.4rem) + 1.5rem);
+    }
+  }
+
+  .vitrina {
+    position: relative;
+    aspect-ratio: 4 / 5;
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    background: #221f1c;
+  }
+  .vitrina-punga {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .context {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+    margin-top: 0.75rem;
+  }
+  .foto-context {
+    margin: 0;
+    position: relative;
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    background: #221f1c;
+  }
+  .foto-context :global(img) {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+  }
+  .foto-context figcaption {
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    padding: 2.5rem 1rem 0.85rem;
+    font-size: 0.75rem;
+    color: #f4efe4;
+    background: linear-gradient(to top, rgb(15 12 8 / 0.75), transparent);
+  }
+
+  h1 {
+    margin: 0.5rem 0 0;
+    font-size: clamp(2.5rem, 5.5vw, 3.75rem);
+    line-height: 1;
+  }
+  .regiune {
+    margin: 0.5rem 0 0;
+    font-size: 0.8125rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--color-ink-faint);
+  }
+  .note {
+    margin: 1.25rem 0 0;
+    font-size: clamp(1.25rem, 2.4vw, 1.5rem);
+    font-style: italic;
+    color: var(--color-ink-muted);
+  }
+  .pret {
+    margin: 1.5rem 0 0;
+    font-size: 1.5rem;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+  }
+  .pret span {
+    font-size: 0.8125rem;
+    font-weight: 400;
+    color: var(--color-ink-faint);
+  }
+  .pret.redus {
+    color: var(--color-stamp);
+  }
+  .pret-vechi {
+    margin-right: 0.5rem;
+    font-size: 1.0625rem;
+    font-weight: 400;
+    color: var(--color-ink-faint);
+    text-decoration-thickness: 1px;
+  }
+  .nota-reducere {
+    margin: 0.6rem 0 0;
+    padding: 0.6rem 0.8rem;
+    border: 1px solid color-mix(in srgb, var(--color-stamp) 32%, transparent);
+    border-radius: 8px;
+    background: color-mix(in srgb, var(--color-stamp) 6%, transparent);
+    font-size: 0.875rem;
+    color: var(--color-ink-muted);
+    max-width: 44ch;
+  }
+  .nota-reducere strong {
+    color: var(--color-stamp);
+    font-weight: 700;
+  }
+
+  .bloc {
+    margin-top: 2.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--color-rule);
+  }
+  .fisa-lot {
+    margin: 0.6rem 0 0;
+  }
+  .nota-fisa,
+  .nota-stoc {
+    margin: 0.9rem 0 0;
+    font-size: 0.75rem;
+  }
+  .nota-stoc {
+    color: var(--color-stamp);
+  }
+  .descriere {
+    margin: 0.8rem 0 0;
+    color: var(--color-ink-muted);
+    max-width: 56ch;
+  }
+  .metode {
+    list-style: none;
+    margin: 0.8rem 0 1.25rem;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .metode li {
+    border: 1px solid var(--color-rule-strong);
+    border-radius: 8px;
+    padding: 0.35rem 0.7rem;
+    font-size: 0.75rem;
+    color: var(--color-ink-muted);
+  }
+
+  .inrudite {
+    padding-block: clamp(3rem, 6vw, 5rem);
+    border-top: 1px solid var(--color-rule);
+  }
+  .sectiune-cap {
+    margin-bottom: 2rem;
+  }
+  .sectiune-cap h2 {
+    margin: 0.5rem 0 0;
+    font-size: clamp(1.6rem, 3vw, 2.25rem);
+  }
+</style>

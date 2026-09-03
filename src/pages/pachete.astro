@@ -1,0 +1,53 @@
+---
+import Baza from '../layouts/Baza.astro';
+import ListaProduse from '../components/ListaProduse.astro';
+import Newsletter from '../components/Newsletter.astro';
+import { pachete } from '../data/altele';
+import { ultimaPrajire, dataLunga } from '../data/cafele';
+
+const prajireText = dataLunga(ultimaPrajire());
+---
+
+<Baza
+  titlu="Pachete și cadouri — Cotă prăjitorie"
+  descriere="Pachet de degustare cu trei loturi, pachet espresso de 2 kg și cutie cadou cu bilet scris de mână. Transport inclus la toate."
+>
+  <section class="cap-pagina">
+    <div class="shell">
+      <p class="field-label">Pachete</p>
+      <h1>Trei feluri de a lua mai mult decât o pungă</h1>
+      <p class="intro">
+        Toate pachetele se compun din prăjirea curentă, ultima fiind {prajireText}, și au
+        transportul inclus. Reducerea vine din cantitate, nu dintr-un preț umflat înainte.
+      </p>
+    </div>
+  </section>
+
+  <section class="continut">
+    <div class="shell">
+      <ListaProduse produse={pachete} />
+    </div>
+  </section>
+
+  <Newsletter />
+</Baza>
+
+<style>
+  .cap-pagina {
+    padding-block: clamp(2.5rem, 5vw, 4rem) 0;
+  }
+  h1 {
+    margin: 0.5rem 0 0;
+    font-size: clamp(2.1rem, 5vw, 3.25rem);
+    max-width: 26ch;
+  }
+  .intro {
+    margin: 1.15rem 0 0;
+    color: var(--color-ink-muted);
+    max-width: 60ch;
+    font-size: 1.0625rem;
+  }
+  .continut {
+    padding-block: clamp(2.5rem, 5vw, 4rem);
+  }
+</style>

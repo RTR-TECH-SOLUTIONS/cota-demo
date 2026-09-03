@@ -1,0 +1,285 @@
+---
+import { Image } from 'astro:assets';
+import Baza from '../layouts/Baza.astro';
+import Abonament from '../components/Abonament';
+import Newsletter from '../components/Newsletter.astro';
+import randDePungi from '../assets/foto/rand-de-pungi.jpg';
+
+const pasi = [
+  {
+    titlu: 'Ne spui ce bei',
+    text: 'Profilul de gust, cât de des și cum vrei măcinată cafeaua. Patru clicuri, fără cont și fără card salvat la noi.',
+  },
+  {
+    titlu: 'Alegem din lotul proaspăt',
+    text: 'În dimineața expedierii alegem din ce am prăjit în ziua aceea. Dacă ai primit o cafea luna trecută, nu ți-o trimitem din nou.',
+  },
+  {
+    titlu: 'Pleacă în aceeași zi',
+    text: 'Punga iese din prăjitorie în ziua prăjirii, cu data scrisă pe etichetă. Ajunge la tine în una sau două zile lucrătoare.',
+  },
+];
+
+const intrebari = [
+  {
+    q: 'Pot să opresc abonamentul?',
+    a: 'Oricând, dintr-un link din e-mailul de confirmare. Nu există perioadă minimă și nu te sunăm să te răzgândești.',
+  },
+  {
+    q: 'Dacă plec în concediu?',
+    a: 'Amâni livrarea următoare cu o săptămână sau două, din același link. Abonamentul rămâne activ, doar se decalează.',
+  },
+  {
+    q: 'Primesc de fiecare dată altceva?',
+    a: 'Da. Ținem minte ce ți-am trimis și nu repetăm un lot decât dacă ne ceri tu. Dacă îți place ceva anume, scrie-ne și îl fixăm.',
+  },
+  {
+    q: 'Cât costă transportul?',
+    a: 'Nimic. La abonamente transportul e inclus în preț, indiferent de valoarea livrării.',
+  },
+  {
+    q: 'Pot să dăruiesc un abonament?',
+    a: 'Da. Pune adresa persoanei la livrare și scrie-ne în observații ce mesaj să punem pe biletul din cutie.',
+  },
+];
+---
+
+<Baza
+  titlu="Abonament de cafea — Cotă prăjitorie"
+  descriere="Un abonament de cafea de specialitate: o pungă de 250 g sau 1 kg din lotul proaspăt prăjit, la 2 sau 4 săptămâni, cu transport inclus."
+>
+  <section class="cap-pagina">
+    <div class="shell cap-grila">
+      <div>
+        <p class="field-label">Abonament</p>
+        <h1>Nu mai alege. Bea ce am prăjit azi.</h1>
+        <p class="intro">
+          Primești o pungă din lotul prăjit chiar în dimineața expedierii, aleasă de noi pe
+          profilul pe care ni-l dai. Transport inclus, fără angajament, oprit dintr-un click.
+        </p>
+      </div>
+      <figure class="cap-foto">
+        <Image
+          src={randDePungi}
+          alt="Pungi de 250 g așezate în rând, fiecare cu banda de etichetă a lotului"
+          widths={[420, 700, 1000]}
+          sizes="(min-width: 900px) 42vw, 100vw"
+          loading="eager"
+        />
+      </figure>
+    </div>
+  </section>
+
+  <section class="sectiune">
+    <div class="shell">
+      <div class="sectiune-cap">
+        <p class="field-label">Configurează</p>
+        <h2>Patru alegeri și gata</h2>
+      </div>
+      <Abonament client:load />
+    </div>
+  </section>
+
+  <section class="sectiune pasi-fundal">
+    <div class="shell">
+      <div class="sectiune-cap">
+        <p class="field-label">Cum funcționează</p>
+        <h2>De la click la cutia poștală</h2>
+      </div>
+      <ol class="pasi">
+        {
+          pasi.map((p, i) => (
+            <li>
+              <span class="pas-numar">0{i + 1}</span>
+              <h3>{p.titlu}</h3>
+              <p>{p.text}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <section class="sectiune">
+    <div class="shell ingust">
+      <div class="sectiune-cap">
+        <p class="field-label">Întrebări</p>
+        <h2>Ce ne întreabă lumea</h2>
+      </div>
+      <div class="intrebari">
+        {
+          intrebari.map((i) => (
+            <details>
+              <summary>{i.q}</summary>
+              <p>{i.a}</p>
+            </details>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <Newsletter />
+</Baza>
+
+<style>
+  .cap-pagina {
+    padding-block: clamp(2.5rem, 5vw, 4rem) 0;
+  }
+  .cap-grila {
+    display: grid;
+    gap: clamp(2rem, 4vw, 3.5rem);
+    align-items: center;
+  }
+  @media (min-width: 900px) {
+    .cap-grila {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 0.85fr);
+      gap: clamp(2.5rem, 5vw, 4.5rem);
+    }
+  }
+  h1 {
+    margin: 0.55rem 0 0;
+    font-size: clamp(2.25rem, 5.5vw, 3.75rem);
+    max-width: 14ch;
+  }
+  .intro {
+    margin: 1.15rem 0 0;
+    color: var(--color-ink-muted);
+    max-width: 50ch;
+    font-size: 1.0625rem;
+  }
+  .cap-foto {
+    margin: 0;
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    background: var(--color-paper-deep);
+  }
+  .cap-foto :global(img) {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+  }
+
+  .sectiune {
+    padding-block: clamp(3rem, 6vw, 5rem);
+  }
+  .sectiune-cap {
+    margin-bottom: clamp(1.75rem, 3.5vw, 2.5rem);
+  }
+  .sectiune-cap h2 {
+    margin: 0.5rem 0 0;
+    font-size: clamp(1.75rem, 3.6vw, 2.5rem);
+  }
+  .ingust > * {
+    max-width: 52rem;
+  }
+
+  .pasi-fundal {
+    background: var(--color-paper-deep);
+    border-block: 1px solid var(--color-rule);
+  }
+  .pasi {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: clamp(1.75rem, 3.5vw, 3rem);
+  }
+  @media (min-width: 760px) {
+    .pasi {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  .pasi li {
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--color-rule-strong);
+  }
+  .pas-numar {
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    color: var(--color-ink-faint);
+  }
+  .pasi h3 {
+    margin: 0.5rem 0 0;
+    font-size: 1.375rem;
+  }
+  .pasi p {
+    margin: 0.55rem 0 0;
+    color: var(--color-ink-muted);
+    font-size: 0.9375rem;
+  }
+
+  .intrebari {
+    border-top: 1px solid var(--color-rule);
+  }
+  details {
+    border-bottom: 1px solid var(--color-rule);
+  }
+  summary {
+    cursor: pointer;
+    padding-block: 1.15rem;
+    font-size: 1.0625rem;
+    font-weight: 500;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1.5rem;
+  }
+  summary::-webkit-details-marker {
+    display: none;
+  }
+  summary::after {
+    content: '+';
+    font-size: 1.15rem;
+    color: var(--color-ink-faint);
+    flex: none;
+    transition: transform 200ms var(--ease-out-soft);
+  }
+  details[open] summary::after {
+    content: '–';
+  }
+  details p {
+    margin: 0 0 1.35rem;
+    color: var(--color-ink-muted);
+    max-width: 62ch;
+  }
+</style>
+
+<style is:global>
+  .config {
+    display: grid;
+    gap: clamp(2rem, 4vw, 3.5rem);
+    align-items: start;
+  }
+  @media (min-width: 900px) {
+    .config {
+      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+      gap: clamp(2.5rem, 5vw, 4.5rem);
+    }
+  }
+  .config-campuri {
+    display: grid;
+    gap: 1.75rem;
+  }
+  .config .optiune {
+    border: 0;
+    border-top: 1px solid var(--color-rule);
+    padding: 1.15rem 0 0;
+    margin: 0;
+    display: grid;
+    gap: 0.7rem;
+  }
+  .config legend {
+    padding: 0;
+  }
+  .config-sumar {
+    border: 1px solid var(--color-rule-strong);
+    border-radius: var(--radius-card);
+    background: var(--color-paper-raised);
+    padding: clamp(1.25rem, 3vw, 1.75rem);
+  }
+  .config-fisa {
+    margin: 0.75rem 0 0;
+  }
+</style>

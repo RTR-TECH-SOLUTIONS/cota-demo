@@ -1,0 +1,211 @@
+---
+import Baza from '../layouts/Baza.astro';
+import CardCafea from '../components/CardCafea';
+import CardProdus from '../components/CardProdus';
+import Newsletter from '../components/Newsletter.astro';
+import { imaginiPungi } from '../lib/pungi';
+import { imaginiProduse } from '../lib/produse';
+import { cafele, ultimaPrajire, dataLunga } from '../data/cafele';
+import { toateAltele, procentReducere } from '../data/altele';
+
+const imagini = await imaginiPungi();
+const imgProduse = await imaginiProduse();
+const prajireText = dataLunga(ultimaPrajire());
+
+const cafeleReduse = cafele.filter((c) => procentReducere(c.pret250, c.pretVechi) !== null);
+const alteleReduse = toateAltele.filter((p) => procentReducere(p.pret, p.pretVechi) !== null);
+
+const economie =
+  cafeleReduse.reduce((s, c) => s + (c.pretVechi! - c.pret250), 0) +
+  alteleReduse.reduce((s, p) => s + (p.pretVechi! - p.pret), 0);
+const reducereMax = Math.max(
+  ...cafeleReduse.map((c) => procentReducere(c.pret250, c.pretVechi)!),
+  ...alteleReduse.map((p) => procentReducere(p.pret, p.pretVechi)!),
+);
+---
+
+<Baza
+  titlu="Reduceri și oferte — Cotă prăjitorie"
+  descriere="Loturile de cafea aflate la reducere, pachetele cu preț mai bun și accesoriile la ofertă. Fiecare reducere are un motiv scris."
+>
+  <section class="cap-pagina">
+    <div class="shell">
+      <p class="field-label">Reduceri</p>
+      <h1>Ce e la preț mai bun săptămâna asta</h1>
+      <p class="intro">
+        Nu facem reduceri inventate și nu umflăm prețul ca să-l tăiem după. Un lot ajunge la
+        reducere din trei motive: se apropie de finalul lui, iese din catalog, sau îl iei la
+        pachet. Motivul e scris la fiecare produs.
+      </p>
+
+      <dl class="cifre">
+        <div>
+          <dt>La reducere</dt>
+          <dd>{cafeleReduse.length + alteleReduse.length} produse</dd>
+        </div>
+        <div>
+          <dt>Reducerea cea mai mare</dt>
+          <dd>{reducereMax}%</dd>
+        </div>
+        <div>
+          <dt>Economie totală</dt>
+          <dd>{economie} lei</dd>
+        </div>
+        <div>
+          <dt>Ultima prăjire</dt>
+          <dd>{prajireText}</dd>
+        </div>
+      </dl>
+    </div>
+  </section>
+
+  <section class="sectiune" aria-labelledby="cafele-titlu">
+    <div class="shell">
+      <div class="sectiune-cap">
+        <p class="field-label">Cafea</p>
+        <h2 id="cafele-titlu">Loturi la reducere</h2>
+      </div>
+      <div class="grila-cafele">
+        {
+          cafeleReduse.map((c, i) => (
+            <CardCafea client:visible cafea={c} imagine={imagini[c.slug]} prioritara={i < 3} />
+          ))
+        }
+      </div>
+
+      <ul class="motive">
+        {
+          cafeleReduse.map((c) => (
+            <li>
+              <span class="motiv-nume">
+                {c.origine}, {c.regiune}
+              </span>
+              <span class="motiv-text">{c.motivReducere}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="sectiune sectiune-adanca" aria-labelledby="altele-titlu">
+    <div class="shell">
+      <div class="sectiune-cap">
+        <p class="field-label">Pachete și accesorii</p>
+        <h2 id="altele-titlu">Mai ieftin la pachet</h2>
+      </div>
+      <div class="grila-cafele">
+        {
+          alteleReduse.map((p) => (
+            <CardProdus client:visible produs={p} imagine={imgProduse[p.imagine]} />
+          ))
+        }
+      </div>
+
+      <ul class="motive">
+        {
+          alteleReduse.map((p) => (
+            <li>
+              <span class="motiv-nume">{p.nume}</span>
+              <span class="motiv-text">{p.motivReducere}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <Newsletter />
+</Baza>
+
+<style>
+  .cap-pagina {
+    padding-block: clamp(2.5rem, 5vw, 4rem) 0;
+  }
+  h1 {
+    margin: 0.5rem 0 0;
+    font-size: clamp(2.1rem, 5vw, 3.25rem);
+    max-width: 24ch;
+  }
+  .intro {
+    margin: 1.15rem 0 0;
+    color: var(--color-ink-muted);
+    max-width: 62ch;
+    font-size: 1.0625rem;
+  }
+
+  .cifre {
+    margin: clamp(2rem, 4vw, 2.75rem) 0 0;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--color-rule);
+    display: grid;
+    gap: 1.25rem clamp(1.5rem, 4vw, 3rem);
+    grid-template-columns: repeat(2, 1fr);
+  }
+  @media (min-width: 760px) {
+    .cifre {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+  .cifre div {
+    display: grid;
+    gap: 0.2rem;
+  }
+  .cifre dt {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-ink-faint);
+  }
+  .cifre dd {
+    margin: 0;
+    font-size: 1.375rem;
+    font-weight: 650;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .sectiune {
+    padding-block: clamp(2.5rem, 5vw, 4rem);
+  }
+  .sectiune-adanca {
+    background: var(--color-paper-deep);
+    border-block: 1px solid var(--color-rule);
+  }
+  .sectiune-cap {
+    margin-bottom: clamp(1.5rem, 3vw, 2.25rem);
+  }
+  .sectiune-cap h2 {
+    margin: 0.5rem 0 0;
+    font-size: clamp(1.6rem, 3.2vw, 2.25rem);
+  }
+
+  /* Motivul fiecărei reduceri, scris pe litere, ca să nu pară procent aruncat. */
+  .motive {
+    list-style: none;
+    margin: clamp(1.75rem, 3vw, 2.5rem) 0 0;
+    padding: 1.25rem 0 0;
+    border-top: 1px solid var(--color-rule);
+    display: grid;
+    gap: 0.75rem;
+  }
+  .motive li {
+    display: grid;
+    gap: 0.15rem;
+  }
+  @media (min-width: 760px) {
+    .motive li {
+      grid-template-columns: minmax(0, 22rem) minmax(0, 1fr);
+      gap: 1.5rem;
+      align-items: baseline;
+    }
+  }
+  .motiv-nume {
+    font-weight: 600;
+    font-size: 0.9375rem;
+  }
+  .motiv-text {
+    font-size: 0.9375rem;
+    color: var(--color-ink-muted);
+  }
+</style>

@@ -1,0 +1,38 @@
+---
+import Baza from '../layouts/Baza.astro';
+import Cos from '../components/Cos';
+import { imaginiPungi } from '../lib/pungi';
+import { imaginiProduse } from '../lib/produse';
+import { toateAltele } from '../data/altele';
+
+// Coșul poate conține și pachete/accesorii: unim cele două seturi de imagini,
+// indexate după slug, ca articolul din localStorage să-și găsească poza.
+const pungi = await imaginiPungi([180, 360]);
+const produse = await imaginiProduse([180, 360]);
+const imagini = {
+  ...pungi,
+  ...Object.fromEntries(
+    toateAltele.filter((p) => produse[p.imagine]).map((p) => [p.slug, produse[p.imagine]]),
+  ),
+};
+---
+
+<Baza titlu="Coșul tău — Cotă prăjitorie" descriere="Coșul tău de la prăjitoria Cotă.">
+  <section class="pagina">
+    <div class="shell">
+      <p class="field-label">Coș</p>
+      <h1>Coșul tău</h1>
+      <Cos imagini={imagini} client:load />
+    </div>
+  </section>
+</Baza>
+
+<style>
+  .pagina {
+    padding-block: clamp(2.5rem, 5vw, 4rem) clamp(3rem, 6vw, 5rem);
+  }
+  h1 {
+    margin: 0.5rem 0 clamp(2rem, 4vw, 3rem);
+    font-size: clamp(2.25rem, 5vw, 3.25rem);
+  }
+</style>

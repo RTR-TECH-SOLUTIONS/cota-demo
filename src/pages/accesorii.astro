@@ -1,0 +1,51 @@
+---
+import Baza from '../layouts/Baza.astro';
+import ListaProduse from '../components/ListaProduse.astro';
+import Newsletter from '../components/Newsletter.astro';
+import { accesorii } from '../data/altele';
+---
+
+<Baza
+  titlu="Accesorii pentru cafea — Cotă prăjitorie"
+  descriere="Râșniță manuală, set de filtru V60, cafetieră moka și cântar de cafea. Patru lucruri care schimbă efectiv ce ai în ceașcă."
+>
+  <section class="cap-pagina">
+    <div class="shell">
+      <p class="field-label">Accesorii</p>
+      <h1>Patru lucruri care schimbă ce ai în ceașcă</h1>
+      <p class="intro">
+        Nu vindem rafturi de gadgeturi. Astea patru sunt cele pe care le folosim și noi în
+        prăjitorie și pe care le recomandăm, în ordinea în care merită luate: cântar, râșniță,
+        apoi metoda.
+      </p>
+    </div>
+  </section>
+
+  <section class="continut">
+    <div class="shell">
+      <ListaProduse produse={accesorii} />
+    </div>
+  </section>
+
+  <Newsletter />
+</Baza>
+
+<style>
+  .cap-pagina {
+    padding-block: clamp(2.5rem, 5vw, 4rem) 0;
+  }
+  h1 {
+    margin: 0.5rem 0 0;
+    font-size: clamp(2.1rem, 5vw, 3.25rem);
+    max-width: 26ch;
+  }
+  .intro {
+    margin: 1.15rem 0 0;
+    color: var(--color-ink-muted);
+    max-width: 60ch;
+    font-size: 1.0625rem;
+  }
+  .continut {
+    padding-block: clamp(2.5rem, 5vw, 4rem);
+  }
+</style>

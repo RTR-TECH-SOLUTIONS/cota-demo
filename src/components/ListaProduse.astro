@@ -1,0 +1,165 @@
+---
+import { Image } from 'astro:assets';
+import AdaugaProdus from './AdaugaProdus';
+import { procentReducere } from '../data/altele';
+import type { Produs } from '../data/altele';
+import { lei } from '../lib/format';
+
+type Props = { produse: Produs[] };
+const { produse } = Astro.props;
+
+// Imaginile de produs, importate ca modul ca să treacă prin astro:assets.
+const fisiere = import.meta.glob<{ default: ImageMetadata }>('../assets/produse/*.jpg', {
+  eager: true,
+});
+const imagine = (nume: string) =>
+  Object.entries(fisiere).find(([cale]) => cale.endsWith(`/${nume}.jpg`))?.[1].default;
+---
+
+<ul class="lista">
+  {
+    produse.map((p, i) => {
+      const reducere = procentReducere(p.pret, p.pretVechi);
+      const foto = imagine(p.imagine);
+      return (
+        <li id={p.slug} class="rand">
+          <figure class="rand-foto">
+            {foto && (
+              <Image
+                src={foto}
+                alt={`${p.nume}, ${p.subtitlu}`}
+                widths={[420, 700, 1000]}
+                sizes="(min-width: 900px) 40vw, 100vw"
+                loading={i === 0 ? 'eager' : 'lazy'}
+              />
+            )}
+            {reducere !== null && <figcaption class="badge badge-reducere">−{reducere}%</figcaption>}
+          </figure>
+
+          <div class="rand-info">
+            <h2>{p.nume}</h2>
+            <p class="rand-subtitlu">{p.subtitlu}</p>
+
+            <p class:list={['rand-pret', { redus: reducere !== null }]}>
+              {p.pretVechi && <s>{lei(p.pretVechi)} lei</s>}
+              {lei(p.pret)} lei
+            </p>
+            {p.motivReducere && <p class="rand-motiv">{p.motivReducere}</p>}
+
+            <dl class="rand-fisa">
+              {p.cuprinde.map(([k, v]) => (
+                <div class="spec-row">
+                  <dt>{k}</dt>
+                  <span class="spec-dots" aria-hidden="true" />
+                  <dd>{v}</dd>
+                </div>
+              ))}
+            </dl>
+
+            <p class="rand-descriere">{p.descriere}</p>
+
+            <AdaugaProdus
+              client:load
+              slug={p.slug}
+              nume={p.nume}
+              subtitlu={p.subtitlu}
+              pret={p.pret}
+              categorie={p.categorie}
+              stoc={p.stoc}
+            />
+          </div>
+        </li>
+      );
+    })
+  }
+</ul>
+
+<style>
+  .lista {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: clamp(2.5rem, 5vw, 4.5rem);
+  }
+  .rand {
+    display: grid;
+    gap: clamp(1.5rem, 3vw, 2.5rem);
+    align-items: start;
+    padding-top: clamp(1.5rem, 3vw, 2.5rem);
+    border-top: 1px solid var(--color-rule);
+    scroll-margin-top: calc(var(--header-h) + 5.5rem);
+  }
+  .rand:first-child {
+    padding-top: 0;
+    border-top: 0;
+  }
+  @media (min-width: 900px) {
+    .rand {
+      grid-template-columns: minmax(0, 0.85fr) minmax(0, 1fr);
+      gap: clamp(2.5rem, 5vw, 4rem);
+    }
+  }
+
+  .rand-foto {
+    position: relative;
+    margin: 0;
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    background: #221f1c;
+  }
+  .rand-foto :global(img) {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+  }
+  .rand-foto figcaption {
+    position: absolute;
+    top: 0.85rem;
+    left: 0.85rem;
+  }
+
+  .rand-info h2 {
+    margin: 0;
+    font-size: clamp(1.6rem, 3.2vw, 2.25rem);
+  }
+  .rand-subtitlu {
+    margin: 0.4rem 0 0;
+    color: var(--color-ink-muted);
+    font-size: 1.0625rem;
+  }
+
+  .rand-pret {
+    margin: 1.15rem 0 0;
+    font-size: 1.625rem;
+    font-weight: 650;
+    font-variant-numeric: tabular-nums;
+  }
+  .rand-pret.redus {
+    color: var(--color-stamp);
+  }
+  .rand-pret s {
+    margin-right: 0.6rem;
+    font-size: 1.125rem;
+    font-weight: 400;
+    color: var(--color-ink-faint);
+    text-decoration-thickness: 1px;
+  }
+  .rand-motiv {
+    margin: 0.5rem 0 0;
+    font-size: 0.9375rem;
+    color: var(--color-stamp);
+  }
+
+  .rand-fisa {
+    margin: 1.5rem 0 0;
+    padding-top: 0.5rem;
+    border-top: 1px solid var(--color-rule);
+    max-width: 30rem;
+  }
+  .rand-descriere {
+    margin: 1.25rem 0 1.75rem;
+    color: var(--color-ink-muted);
+    max-width: 58ch;
+  }
+</style>

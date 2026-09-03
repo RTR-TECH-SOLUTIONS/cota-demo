@@ -1,0 +1,189 @@
+---
+import { Image } from 'astro:assets';
+import { cafele } from '../data/cafele';
+import { toateAltele, procentReducere } from '../data/altele';
+import fundal from '../assets/foto/racire.jpg';
+import { cale } from '../lib/cale';
+
+type Props = { compact?: boolean };
+const { compact = false } = Astro.props;
+
+const cafeleReduse = cafele.filter((c) => procentReducere(c.pret250, c.pretVechi) !== null);
+const alteleReduse = toateAltele.filter((p) => procentReducere(p.pret, p.pretVechi) !== null);
+
+const maxim = Math.max(
+  ...cafeleReduse.map((c) => procentReducere(c.pret250, c.pretVechi)!),
+  ...alteleReduse.map((p) => procentReducere(p.pret, p.pretVechi)!),
+);
+const cateProduse = cafeleReduse.length + alteleReduse.length;
+const economie =
+  cafeleReduse.reduce((t, c) => t + (c.pretVechi! - c.pret250), 0) +
+  alteleReduse.reduce((t, p) => t + (p.pretVechi! - p.pret), 0);
+const celMaiIeftin = Math.min(...cafeleReduse.map((c) => c.pret250));
+---
+
+<section class:list={['banner', { compact }]} aria-labelledby="banner-titlu">
+  <Image
+    class="banner-fundal"
+    src={fundal}
+    alt=""
+    widths={[900, 1400, 2000]}
+    sizes="100vw"
+    loading="lazy"
+  />
+  <div class="banner-voal" aria-hidden="true"></div>
+
+  <div class="shell banner-rand">
+    <div class="banner-text">
+      <p class="banner-eticheta">Ofertele săptămânii</p>
+      <h2 id="banner-titlu">
+        Până la <span class="banner-procent">−{maxim}%</span> la loturile care se termină
+      </h2>
+      <p class="banner-sub">
+        {cateProduse} produse cu preț redus, din stocul curent. Sunt cafele bune care au trecut de
+        două săptămâni de la prăjire sau ies din catalog — nu resturi. De la {celMaiIeftin} lei punga.
+      </p>
+      <div class="banner-actiuni">
+        <a href={cale('/promotii')} class="btn banner-buton">Vezi toate reducerile</a>
+        <span class="banner-economie">Economisești până la {economie} lei</span>
+      </div>
+    </div>
+
+    <div class="banner-stampila" aria-hidden="true">
+      <span class="banner-stampila-numar">−{maxim}%</span>
+      <span class="banner-stampila-text">reducere</span>
+    </div>
+  </div>
+</section>
+
+<style>
+  .banner {
+    position: relative;
+    isolation: isolate;
+    background: #1a120c;
+    overflow: hidden;
+  }
+  .banner :global(.banner-fundal) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -2;
+  }
+  .banner-voal {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(
+      to right,
+      rgb(20 12 7 / 0.92) 0%,
+      rgb(20 12 7 / 0.8) 46%,
+      rgb(20 12 7 / 0.5) 100%
+    );
+  }
+
+  .banner-rand {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: clamp(1.5rem, 4vw, 3.5rem);
+    padding-block: clamp(2.25rem, 5vw, 3.75rem);
+    color: var(--color-paper);
+  }
+  .compact .banner-rand {
+    padding-block: clamp(1.75rem, 3.5vw, 2.5rem);
+  }
+
+  .banner-text {
+    max-width: 46rem;
+  }
+  .banner-eticheta {
+    margin: 0;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--color-crema);
+  }
+  .banner-rand h2 {
+    margin: 0.5rem 0 0;
+    font-size: clamp(1.6rem, 3.6vw, 2.6rem);
+    line-height: 1.12;
+    color: var(--color-paper);
+    max-width: 18ch;
+  }
+  .banner-procent {
+    color: #e8955c;
+    white-space: nowrap;
+  }
+  .banner-sub {
+    margin: 0.9rem 0 0;
+    max-width: 52ch;
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    color: color-mix(in srgb, var(--color-paper) 82%, transparent);
+  }
+  .compact .banner-sub {
+    display: none;
+  }
+
+  .banner-actiuni {
+    margin-top: 1.6rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1.25rem;
+  }
+  .banner-buton {
+    background: var(--color-accent);
+    color: #fff;
+    border-color: var(--color-accent);
+    font-weight: 600;
+  }
+  .banner-buton:hover {
+    background: #b06430;
+    border-color: #b06430;
+  }
+  .banner-economie {
+    font-size: 0.875rem;
+    color: var(--color-crema);
+  }
+
+  /* Ștampila de reducere: elementul care strigă oferta de la distanță. */
+  .banner-stampila {
+    display: none;
+    flex: none;
+    width: clamp(8rem, 13vw, 10.5rem);
+    aspect-ratio: 1;
+    place-content: center;
+    text-align: center;
+    border-radius: 999px;
+    background: var(--color-accent);
+    box-shadow: 0 18px 46px -18px rgb(0 0 0 / 0.7);
+    transform: rotate(-6deg);
+  }
+  @media (min-width: 880px) {
+    .banner-stampila {
+      display: grid;
+    }
+  }
+  .banner-stampila-numar {
+    display: block;
+    font-size: clamp(1.9rem, 3.4vw, 2.6rem);
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: #fff;
+    font-variant-numeric: tabular-nums;
+  }
+  .banner-stampila-text {
+    display: block;
+    margin-top: 0.3rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: color-mix(in srgb, #fff 82%, transparent);
+  }
+</style>

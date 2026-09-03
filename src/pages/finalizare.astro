@@ -1,0 +1,24 @@
+---
+import Baza from '../layouts/Baza.astro';
+import Finalizare from '../components/Finalizare';
+---
+
+<Baza titlu="Finalizare comandă — Cotă prăjitorie" descriere="Finalizează comanda la prăjitoria Cotă.">
+  <section class="pagina">
+    <div class="shell">
+      <p class="field-label">Pasul final</p>
+      <h1>Finalizare comandă</h1>
+      <Finalizare client:load />
+    </div>
+  </section>
+</Baza>
+
+<style>
+  .pagina {
+    padding-block: clamp(2.5rem, 5vw, 4rem) clamp(3rem, 6vw, 5rem);
+  }
+  h1 {
+    margin: 0.5rem 0 clamp(2rem, 4vw, 3rem);
+    font-size: clamp(2.25rem, 5vw, 3.25rem);
+  }
+</style>

@@ -1,0 +1,397 @@
+---
+import { Image } from 'astro:assets';
+import Baza from '../layouts/Baza.astro';
+import Newsletter from '../components/Newsletter.astro';
+import v60 from '../assets/foto/v60.jpg';
+import rasnita from '../assets/foto/rasnita.jpg';
+import moka from '../assets/foto/moka.jpg';
+
+const retete = [
+  {
+    metoda: 'V60',
+    pentru: 'Cafele fructate și spălate, unde vrei limpezime',
+    randuri: [
+      ['Cafea', '15 g'],
+      ['Apă', '250 ml'],
+      ['Temperatură', '94 °C'],
+      ['Măcinare', 'Medie, ca sarea grunjoasă'],
+      ['Preinfuzie', '40 g apă, 45 s'],
+      ['Timp total', '2 min 45 s'],
+    ],
+    pasi: 'Clătește filtrul cu apă fierbinte. Toarnă 40 g de apă și lasă cafeaua să respire 45 de secunde. Adaugă restul apei în două reprize egale, în cerc, fără să atingi hârtia. Ultima picătură trebuie să cadă în jurul minutului 2:45.',
+  },
+  {
+    metoda: 'Espresso',
+    pentru: 'Blendul de casă și cafelele naturale',
+    randuri: [
+      ['În coș', '18 g'],
+      ['În ceașcă', '38 g'],
+      ['Temperatură', '93 °C'],
+      ['Măcinare', 'Fină, ajustată zilnic'],
+      ['Presiune', '9 bar'],
+      ['Timp total', '27 – 30 s'],
+    ],
+    pasi: 'Cântărește ce pui și ce iese, nu te lua după ochi. Dacă extracția curge sub 25 de secunde, macină mai fin; dacă trece de 33, macină mai grosier. Reglează dimineața, după prima cafea, când mașina s-a încălzit de tot.',
+  },
+  {
+    metoda: 'Cafetieră',
+    pentru: 'Dimineți fără cântar și cafea pentru mai mulți',
+    randuri: [
+      ['Cafea', '30 g'],
+      ['Apă', '500 ml'],
+      ['Temperatură', '95 °C'],
+      ['Măcinare', 'Grosieră'],
+      ['Amestecare', 'La 1 min, cu o lingură'],
+      ['Timp total', '4 min, apoi presezi'],
+    ],
+    pasi: 'Toarnă toată apa deodată. La un minut, rupe crusta de la suprafață cu o lingură și ia spuma cu ea. Lasă până la patru minute, apasă lent pistonul și toarnă imediat în alt vas, ca să nu continue extracția.',
+  },
+  {
+    metoda: 'Moka',
+    pentru: 'Cafea concentrată, pe aragaz',
+    randuri: [
+      ['Cafea', 'Coșul plin, neapăsată'],
+      ['Apă', 'Fierbinte, până sub supapă'],
+      ['Măcinare', 'Medie-fină'],
+      ['Foc', 'Mic, capacul deschis'],
+      ['Oprești', 'Când sunetul se schimbă'],
+      ['Timp total', '4 – 5 min'],
+    ],
+    pasi: 'Pune apă deja fierbinte în rezervor, ca să nu se ardă cafeaua cât se încălzește. Ține focul mic. Când curgerea devine gălăgioasă și deschisă la culoare, ia moka de pe foc și răcește baza sub jet de apă.',
+  },
+];
+
+const macinare = [
+  ['Cafetieră', 'Grosieră', 'Ca boabele de piper sparte'],
+  ['V60, Chemex', 'Medie', 'Ca sarea grunjoasă'],
+  ['Aeropress', 'Medie-fină', 'Ca nisipul de plajă'],
+  ['Moka', 'Medie-fină', 'Puțin mai fină decât nisipul'],
+  ['Espresso', 'Fină', 'Ca făina, dar cu ceva corp'],
+];
+---
+
+<Baza
+  titlu="Ghid de preparare — Cotă prăjitorie"
+  descriere="Rețete de pornire pentru V60, espresso, cafetieră și moka, plus tabelul de măcinare și cum se păstrează cafeaua proaspăt prăjită."
+>
+  <section class="cap-pagina">
+    <div class="shell cap-grila">
+      <div>
+        <p class="field-label">Ghid de preparare</p>
+        <h1>Rețete de la care să pornești.</h1>
+        <p class="intro">
+          Nu sunt legi. Sunt punctul de plecare pe care îl folosim și noi când deschidem o pungă
+          nouă, iar de acolo ajustezi după gustul tău. Un singur lucru nu e negociabil: cântarul.
+        </p>
+      </div>
+      <figure class="cap-foto">
+        <Image
+          src={v60}
+          alt="Apă turnată în spirală peste cafea, într-un filtru conic"
+          widths={[420, 700, 1000]}
+          sizes="(min-width: 900px) 40vw, 100vw"
+          loading="eager"
+        />
+      </figure>
+    </div>
+  </section>
+
+  <section class="sectiune">
+    <div class="shell">
+      <div class="retete">
+        {
+          retete.map((r) => (
+            <article class="reteta">
+              <header>
+                <h2>{r.metoda}</h2>
+                <p class="reteta-pentru">{r.pentru}</p>
+              </header>
+              <dl>
+                {r.randuri.map(([k, v]) => (
+                  <div class="spec-row">
+                    <dt>{k}</dt>
+                    <span class="spec-dots" aria-hidden="true" />
+                    <dd>{v}</dd>
+                  </div>
+                ))}
+              </dl>
+              <p class="reteta-pasi">{r.pasi}</p>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="sectiune fundal">
+    <div class="shell">
+      <div class="macinare-cap">
+        <div class="sectiune-cap">
+          <p class="field-label">Măcinare</p>
+          <h2>Cât de fin, pentru ce metodă</h2>
+        </div>
+        <div class="macinare-foto">
+          <figure>
+            <Image
+              src={rasnita}
+              alt="Râșniță manuală de cafea, cu boabe și cafea măcinată alături"
+              widths={[320, 560, 800]}
+              sizes="(min-width: 900px) 22vw, 46vw"
+              loading="lazy"
+            />
+          </figure>
+          <figure>
+            <Image
+              src={moka}
+              alt="Cafetieră moka pe flacără, cu cafeaua începând să urce"
+              widths={[320, 560, 800]}
+              sizes="(min-width: 900px) 22vw, 46vw"
+              loading="lazy"
+            />
+          </figure>
+        </div>
+      </div>
+      <div class="tabel-invelis">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Metodă</th>
+              <th scope="col">Măcinare</th>
+              <th scope="col">Cum arată</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              macinare.map(([m, f, c]) => (
+                <tr>
+                  <th scope="row">{m}</th>
+                  <td>{f}</td>
+                  <td>{c}</td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+      <p class="nota-tabel">
+        Dacă poți, macină chiar înainte de preparare. Cafeaua măcinată își pierde partea de sus în
+        zece zile, oricât de bine ai închide punga.
+      </p>
+    </div>
+  </section>
+
+  <section class="sectiune">
+    <div class="shell ingust">
+      <div class="sectiune-cap">
+        <p class="field-label">Păstrare</p>
+        <h2>Ce facem cu punga după ce o deschizi</h2>
+      </div>
+      <div class="sfaturi">
+        <article>
+          <h3>Lasă-i câteva zile</h3>
+          <p>
+            Cafeaua proaspăt prăjită încă degazează. La filtru e cel mai bună între ziua a cincea și
+            a douăzecea de la prăjire; la espresso, între a zecea și a treizecea.
+          </p>
+        </article>
+        <article>
+          <h3>Ține-o în pungă</h3>
+          <p>
+            Punga cu supapă e mai bună decât majoritatea recipientelor de bucătărie. Scoate aerul,
+            îndoaie marginea și pune-o într-un dulap, la temperatura camerei.
+          </p>
+        </article>
+        <article>
+          <h3>Nu în frigider</h3>
+          <p>
+            Cafeaua trage umezeală și mirosuri. În congelator merge, dar numai în porții mici,
+            închise etanș, scoase o singură dată. Frigiderul, niciodată.
+          </p>
+        </article>
+        <article>
+          <h3>Apa contează mai mult decât crezi</h3>
+          <p>
+            Apa de la robinet din Brașov merge; în București filtreaz-o. Apa plată îmbuteliată cu
+            reziduu sec între 50 și 150 mg/l e cel mai sigur pariu.
+          </p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <Newsletter />
+</Baza>
+
+<style>
+  .cap-pagina {
+    padding-block: clamp(2.5rem, 5vw, 4rem) 0;
+  }
+  .cap-grila {
+    display: grid;
+    gap: clamp(2rem, 4vw, 3.5rem);
+    align-items: center;
+  }
+  @media (min-width: 900px) {
+    .cap-grila {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 0.8fr);
+      gap: clamp(2.5rem, 5vw, 4.5rem);
+    }
+  }
+  h1 {
+    margin: 0.55rem 0 0;
+    font-size: clamp(2.25rem, 5.5vw, 3.75rem);
+    max-width: 14ch;
+  }
+  .intro {
+    margin: 1.15rem 0 0;
+    color: var(--color-ink-muted);
+    max-width: 52ch;
+    font-size: 1.0625rem;
+  }
+  .cap-foto {
+    margin: 0;
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    background: var(--color-paper-deep);
+  }
+  .cap-foto :global(img) {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+  }
+
+  .sectiune {
+    padding-block: clamp(3rem, 6vw, 5rem);
+  }
+  .fundal {
+    background: var(--color-paper-deep);
+    border-block: 1px solid var(--color-rule);
+  }
+  .ingust > * {
+    max-width: 58rem;
+  }
+  .sectiune-cap {
+    margin-bottom: clamp(1.75rem, 3.5vw, 2.5rem);
+  }
+  .sectiune-cap h2 {
+    margin: 0.5rem 0 0;
+    font-size: clamp(1.75rem, 3.6vw, 2.5rem);
+  }
+
+  .retete {
+    display: grid;
+    gap: clamp(2rem, 4vw, 3rem);
+  }
+  @media (min-width: 760px) {
+    .retete {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .reteta {
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--color-rule-strong);
+  }
+  .reteta h2 {
+    margin: 0;
+    font-size: clamp(1.5rem, 3vw, 1.875rem);
+  }
+  .reteta-pentru {
+    margin: 0.3rem 0 1.1rem;
+    font-size: 0.9375rem;
+    color: var(--color-ink-muted);
+  }
+  .reteta-pasi {
+    margin: 1.1rem 0 0;
+    padding-top: 1rem;
+    border-top: 1px solid var(--color-rule);
+    color: var(--color-ink-muted);
+    font-size: 0.9375rem;
+  }
+
+  .macinare-cap {
+    display: grid;
+    gap: clamp(1.5rem, 3vw, 2.5rem);
+    align-items: end;
+  }
+  @media (min-width: 900px) {
+    .macinare-cap {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr);
+    }
+  }
+  .macinare-foto {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+  }
+  .macinare-foto figure {
+    margin: 0;
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    background: #1a1714;
+  }
+  .macinare-foto :global(img) {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+  }
+
+  .tabel-invelis {
+    overflow-x: auto;
+    border-top: 1px solid var(--color-rule-strong);
+  }
+  table {
+    width: 100%;
+    min-width: 34rem;
+    border-collapse: collapse;
+    text-align: left;
+  }
+  th,
+  td {
+    padding: 0.9rem 1rem 0.9rem 0;
+    border-bottom: 1px solid var(--color-rule);
+    font-weight: 400;
+    vertical-align: baseline;
+  }
+  thead th {
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-ink-faint);
+    padding-top: 0.9rem;
+  }
+  tbody th {
+    font-weight: 500;
+  }
+  tbody td:last-child {
+    color: var(--color-ink-muted);
+  }
+  .nota-tabel {
+    margin: 1.25rem 0 0;
+    font-size: 0.9375rem;
+    color: var(--color-ink-muted);
+    max-width: 56ch;
+  }
+
+  .sfaturi {
+    display: grid;
+    gap: clamp(1.5rem, 3vw, 2.5rem);
+  }
+  @media (min-width: 700px) {
+    .sfaturi {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .sfaturi article {
+    padding-top: 1.15rem;
+    border-top: 1px solid var(--color-rule);
+  }
+  .sfaturi h3 {
+    margin: 0;
+    font-size: 1.25rem;
+  }
+  .sfaturi p {
+    margin: 0.55rem 0 0;
+    color: var(--color-ink-muted);
+    font-size: 0.9375rem;
+  }
+</style>
