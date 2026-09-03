@@ -5,11 +5,28 @@ Brandul „Cotă" (prăjitorie din Brașov, din 2019) e inventat — se schimbă
 când vine numele real. „Cotă" = altitudinea de pe hartă, adică exact metrica-cheie de pe
 eticheta unei cafele de specialitate. Marca e o curbă de nivel.
 
+**Live:** https://rtr-tech-solutions.github.io/cota-demo/
+
 ```bash
 npm install
 npm run dev        # http://localhost:4321
 npm run build && npm run preview
 ```
+
+## Deploy
+
+Push pe `main` → GitHub Actions build → GitHub Pages
+(`.github/workflows/deploy.yml`). Nu e nimic de făcut manual.
+
+Site-ul stă într-un **subdirector** (`/cota-demo/`), nu în rădăcina domeniului.
+Astro prefixează singur asset-urile prin `base` din `astro.config.mjs`, dar **nu**
+și `href`-urile scrise de mână — alea trec prin `src/lib/cale.ts`. Dacă adaugi un
+link intern, scrie-l `href={cale('/ruta')}`, altfel dă 404 pe Pages și merge doar
+în local. Verificarea: în build, niciun `href="/…"` nu trebuie să existe fără
+prefixul `/cota-demo`.
+
+La proiectul real, cu domeniu propriu, se scot `base` din config și helperul
+devine identitate — nu trebuie atinsă nicio pagină.
 
 ## De unde vine structura
 
