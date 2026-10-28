@@ -162,8 +162,7 @@ titluri 650, prețuri 650, etichete mici uppercase 600 cu `letter-spacing: 0.075
 
 Versiunile anterioare foloseau Newsreader (serifă pe titluri) + IBM Plex Mono (etichete) +
 Instrument Sans (corp). Combinația a fost respinsă: citea ca revistă, nu ca magazin.
-**Newsreader și monospace-ul pe etichete sunt interzise** de aici înainte — regula e scrisă în
-`~/.claude/skills/design-refs/anti-ai-tells.md` și în memoria proiectului. Pachetele au fost
+**Newsreader și monospace-ul pe etichete sunt interzise** de aici înainte — regula e notată în ghidul de design al proiectului. Pachetele au fost
 scoase din `package.json`, iar etichetele tipărite pe packshot-uri au fost **regenerate cu
 Inter**, ca fontul interzis să nu rămână în poze.
 
